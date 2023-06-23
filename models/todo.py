@@ -11,7 +11,7 @@ from sqlalchemy.orm import relationship
 
 class Todo(BaseModel, Base):
     __tablename__ = 'todos'
-    id = Column(Integer, primary_key=True)
+    id = Column(String(255), primary_key=True)
     user_name = Column(String(128), ForeignKey('users.username'))
     title = Column(String(255))
     description = Column(String(255))
@@ -20,10 +20,8 @@ class Todo(BaseModel, Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+    user = relationship('User', backref='todos') 
 
-    user = relationship('User', backref='todos')
-    locoreminder = relationship('LocationReminder', backref='todos', cascade='all, delete, delete-orphan')
-
-    def __init__(*args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """initializes todo"""
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs) 

@@ -16,7 +16,7 @@ Base = declarative_base()
 
 class BaseModel:
     """BaseModel from which all classes will be found"""
-    id = Column(String(60), primary_key=True)
+    id = Column(String(255), primary_key=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
@@ -43,7 +43,10 @@ class BaseModel:
 
     def __str__(self):
         """ String representation"""
-        return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        if self.__class__.__name__ == 'User':
+            return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.username, self.__dict__)
+        else:
+            return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
 
     def save(self):
         """ updates the attr updated_at with the curret datetime"""
@@ -59,13 +62,13 @@ class BaseModel:
         if "updated_at" in new_dict:
             new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
         new_dict["__class__"] = self.__class__.__name__
-        '''
+        
         if "_sa_instance_state" in new_dict:
-            del new_dict["_sa_innstance_state"]
-        if save_fs in None:
+            del new_dict["_sa_instance_state"]
+        if save_fs is None:
             if "password" in new_dict:
                 del new_dict["password"]
-        '''
+        
         return new_dict
     def delete(self):
         """ Deletes the current instance from the storage"""

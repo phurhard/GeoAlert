@@ -12,7 +12,7 @@ from sqlalchemy.orm import relationship
 class Location(BaseModel, Base):
     __tablename__ = 'locations'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(128), primary_key=True)
     user_name = Column(String(128), ForeignKey('users.username'))
     name = Column(String(128), nullable=True)
     address = Column(String(128), nullable=True)

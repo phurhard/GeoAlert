@@ -8,6 +8,8 @@ from models.basemodel import BaseModel, Base
 import sqlalchemy
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.schema import UniqueConstraint
+from hashlib import md5
 
 
 class User(BaseModel, Base):
@@ -20,6 +22,10 @@ class User(BaseModel, Base):
     password = Column(String(128), nullable=False, default='password')
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+            UniqueConstraint('username', name='uq_username'),
+            )
 
     def __init__(self, *args, **kwargs):
         '''initializes user'''

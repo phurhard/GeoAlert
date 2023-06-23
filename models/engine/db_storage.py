@@ -23,11 +23,18 @@ class DBStorage:
 
     def __init__(self):
         """ Instantiate the database storage"""
-        '''USER = getenv('USER')
+        USER = getenv('USER')
         PWD = getenv('PWD')
         HOST = getenv('HOST')
-        DB = getenv('DB')'''
-        self.__engine = create_engine('mysql+mysqldb://admin:GeoAlertAdmin@localhost/GeoAlert')
+        DB = getenv('DB')
+        if HOST is not None:
+            self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
+                USER, PWD, HOST, DB))
+        else:
+            self.__engine = create_engine('mysql+mysqldb://admin:GeoAlertAdmin@localhost/GeoAlert')
+        Base.metadata.create_all(self.__engine)
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = Session()
 
     def all(self, cls=None):
         """ Query on the current database session"""
@@ -35,8 +42,12 @@ class DBStorage:
         for clss in classes:
             if cls is None or cls is classes[clss] or cls is clss:
                 objs = self.__session.query(classes[clss]).all()
+
                 for obj in objs:
-                    key = obj.__class__.__name__ + '.' + obj.id
+                    if obj.__class__.__name__ == 'User':
+                        key = obj.__class__.__name__ + '.' + obj.username
+                    else:
+                        key = obj.__class__.__name__ + '.' + obj.id
                     new_dict[key] = obj
         return (new_dict)
 
@@ -53,23 +64,47 @@ class DBStorage:
         if obj is not None:
             self.__session.delete(obj)
 
-    def get(self, cls, id):
+    def removed(self, obj):
+        '''remova'''
+        objs = self.__session.query(obj).all()
+        for i in objs:
+            self.__session.delete(i)
+        self.__session.commit()
+
+    def get(self, cls, unit):
         """Returs the object based on it's id.
         will later need to change the id to something that can be easy to implement"""
         if cls not in classes.values():
             return None
         all_cls = models.storage.all(cls)
+        if cls == eval('User'):
+            for value in all_cls.values():
+                if (value.username == unit):
+                    return value
         for value in all_cls.values():
-            if (value.id == id):
+            if (value.id == unit):
                 return value
+
+    def count(self, cls=None):
+        """Count the number of objects in the storage"""
+        all_classes  = classes.values()
+        count = 0
+
+        if not cls:
+ 
+            for clss in all_classes:
+                count += len(models.storage.all(clss).values())
+        else:
+            count += len(models.storage.all(cls).values())
+        return count
 
     def reload(self):
         """Reloads data from the database"""
         Base.metadata.create_all(self.__engine)
         sessionFactory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sessionFactory)
-        self.__session = Session
+        self.__session = Session()
 
-    def close(self):
-        """Closes the current databasse session"""
-        self.__session.remove()
+#    def close(self):
+#        """Closes the current database session"""
+#        self.__session.remove()
