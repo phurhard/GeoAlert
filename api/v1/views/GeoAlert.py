@@ -60,7 +60,7 @@ def post_user():
     instance.save()
     return make_response(jsonify(instance.to_dict()), 201)
 
-@app_views.route('/users/<username>', methods=['PUT'])
+@app_views.route('/users/<username>', methods=['PUT'], strict_slashes=False)
 def put_user(username):
     """Updates a user"""
     user = storage.get(User, username)
@@ -75,3 +75,35 @@ def put_user(username):
             setattr(user, k, v)
     storage.save()
     return make_response(jsonify(user.to_dict()), 200)
+
+@app_views.route('/<username>/todos', strict_slashes=False)
+def get_Todos(username):
+    """Gets all todos relates to a user"""
+    user = storage.get(User, username)
+    Todo = []
+    if not user:
+        abort(404)
+    for todo in user.todos:
+        Todo.append(todo.to_dict())
+    return jsonify(Todo)
+
+''' To get the todos with a specific boolean, edit it with frontend'''
+
+@app_views.route('/<username>/todo', strict_slashes=False)
+def create_todo(username):
+    """Creates a new todo for a user"""
+    data = request.get_json()
+    if user_name in data:
+        data['user_name'] = username
+    todo = Todo(**data)
+    return jsonify(todo)
+
+
+@app_views.route('/admin', strict_slashes=False)
+def all():
+    '''shows all entries in the database'''
+    database = storage.all()
+    data = {}
+    for k, v in database.items():
+        data[k] = v.to_dict()
+    return jsonify(data)

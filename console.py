@@ -66,12 +66,16 @@ class GeoAlert(cmd.Cmd):
                 key = args[0] + "." + args[1]
                 if key in models.storage.all():
                     print(models.storage.all()[key])
+                    print(models.storage.all()[key].__dir__())
+                    return models.storage.all()[key]
                 else:
                     print('No instance found')
             else:
                 print('instance i missing')
         else:
             print("class does not exist")
+    
+     
 
     def do_remove(self, arg):
         '''removes'''
