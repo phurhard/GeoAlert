@@ -2,9 +2,8 @@ import React from "react";
 
 function NewTask() {
   return (
-    <div className="newtask-container">
-      {/* <div className='new-head border border-1'>Box</div> */}
-      <h5>What's New?</h5>
+    <div className="main newtask-container">
+      <h5>Add a new Task</h5>
       <form>
         <div class="mb-3">
           <label for="title" className="form-label">
