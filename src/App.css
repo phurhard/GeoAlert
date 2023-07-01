@@ -1,0 +1,266 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
+* {
+  box-sizing: border-box;
+  font-family: "Montserrat Alternates", sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+html {
+  font-size: 62.5%;
+}
+body {
+  font-size: 1.6rem;
+}
+header {
+  padding: 3.3rem 2rem 2.7rem 2rem;
+  background-color: #1f9e59;
+  /* padding-bottom: 2.7rem; */
+}
+nav .greetings h3 {
+  font-family: Montserrat;
+  font-size: 2.4rem;
+  font-weight: 600;
+  font-style: normal;
+  /* line-height: 29px; */
+  /* letter-spacing: 0em; */
+  margin-bottom: 0px;
+}
+nav .date {
+  margin-top: 0.1rem;
+  font-size: 1.4rem;
+  font-weight: 400;
+  /* margin-bottom: 2.7rem; */
+  /* line-height: 17px;
+  letter-spacing: 0em; */
+}
+nav .box {
+  /* width: 36px;
+  height: 30px; */
+  background: #d9d9d9;
+  border: 1px solid #000000;
+}
+.main {
+  padding: 0 2rem 0 2rem;
+}
+.what-are-we h5 {
+  margin-top: 1.9rem;
+  margin-bottom: 1.4rem;
+  color: #000;
+  font-size: 2rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.today-task-head .title,
+.time,
+.location,
+.status {
+  font-size: 1.4rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.today-task-head .status {
+  text-align: right;
+  padding-right: 1.4rem;
+}
+.today-task-head .title {
+  /* text-align: right; */
+  padding-left: 0.9rem;
+}
+.today-task-head {
+  border-bottom: 0.1rem #393943 solid;
+  margin-right: -1.4rem;
+  margin-left: -0.9rem;
+}
+.today-task-container {
+  border-radius: 0.5rem;
+  border: 1px solid #969494;
+  background: #fff;
+  padding: 1.8rem 1.4rem 0 0.9rem;
+}
+.today-task h6 {
+  font-size: 2rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.task .task-title {
+  color: #000;
+  font-size: 1.4rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.task {
+  padding: 1.8rem 0 1.1rem 0;
+  border-top: 1px #959595 solid;
+  margin-left: -0.9rem;
+  margin-right: -1.4rem;
+}
+.task-time {
+  font-size: 1.2rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.task-location {
+  font-size: 1.2rem;
+  font-family: Tahoma;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.show-all-tasks {
+  margin-top: 1.2rem;
+}
+.show-all-tasks a {
+  color: #2f80ed;
+  font-size: 1.4rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.main-no-item .first-p {
+  margin: 1.8rem 0 1.3rem 0;
+  font-size: 2rem;
+  font-family: Philosopher;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.main-no-item .second-p {
+  margin: 5.4rem 0 3.3rem 0;
+  text-align: center;
+  font-size: 2rem;
+  font-family: Philosopher;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.button-center {
+  display: flex;
+  justify-content: center;
+}
+.main-no-item button {
+  display: inline-flex;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  background: #2f80ed;
+  color: #fff;
+  font-size: 2rem;
+  font-family: "Red Hat Display";
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  border: none;
+}
+.task-counts {
+  display: flex;
+  width: 10rem;
+  height: 10rem;
+  padding: 4rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* flex-shrink: 0; */
+  border-radius: 10rem;
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  margin: -3rem auto 2.4rem auto;
+}
+.task-counts h4 {
+  color: #000;
+  font-size: 3.6rem;
+  font-family: Playfar Display SC;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.task-counts .count span {
+  color: #000;
+  font-size: 1rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.task-filter label {
+  font-size: 1.6rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.todo-container img,
+svg {
+  vertical-align: top;
+}
+.todo-container .item-title {
+  font-size: 2rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.todo-container .todo-status {
+  font-size: 1.2rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.todo-container .duration,
+.location {
+  font-size: 1.2rem;
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.newtask-container h5 {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 29px;
+  text-transform: capitalize;
+}
+.newtask-container {
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+.newtask-container input.form-control,
+textarea.form-control {
+  background: #d9d9d9;
+  border-radius: 0;
+}
+.newtask-container .form-control:focus {
+  background-color: #fff;
+  border-color: #86b7fe;
+}
+button {
+  border-radius: 0;
+  border: 1px solid black;
+  display: inline-block;
+  padding: 0.6rem;
+  border-radius: 0px;
+}
+
+@media only screen and (min-width: 576px) {
+  .newtask-container {
+    width: 50%;
+  }
+  .today-task-container {
+    width: 50%;
+    margin: 0 auto;
+  }
+}
