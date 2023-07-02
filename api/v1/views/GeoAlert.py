@@ -6,9 +6,18 @@ from models.location import Location
 from models import storage
 from models.locationreminder import LocationReminder
 from api.v1.views import app_views
+from datetime import datetime
 from flask import abort, jsonify, make_response, request
 from flasgger.utils import swag_from
 
+
+@app_views.route('/login/<username>', methods=['GET'], strict_slashes=False)
+def login(username):
+    '''users login'''
+    try:
+        user = storage.get(User, username)
+    except Exception as e:
+        return jsonify({'User': "User does not exist"})
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 # @swag_from('documentation/user/all_users.yml')
@@ -46,7 +55,7 @@ def delete_user(username):
     return make_response(jsonify({}), 200)
 
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
-def post_user():
+def create_user():
     """Creates a new user"""
     if not request.get_json():
         abort(400, description="Error, not valid")
@@ -80,23 +89,86 @@ def put_user(username):
 def get_Todos(username):
     """Gets all todos relates to a user"""
     user = storage.get(User, username)
-    Todo = []
+    k = 1
+    Todo = {}
     if not user:
         abort(404)
     for todo in user.todos:
-        Todo.append(todo.to_dict())
+        Todo[k] = todo.to_dict()
+        k += 1
     return jsonify(Todo)
 
 ''' To get the todos with a specific boolean, edit it with frontend'''
 
-@app_views.route('/<username>/todo', strict_slashes=False)
+@app_views.route('/<username>/todo', methods=["POST"], strict_slashes=False)
 def create_todo(username):
     """Creates a new todo for a user"""
     data = request.get_json()
-    if user_name in data:
-        data['user_name'] = username
+    if not data:
+        print('Not a valid JSON')
+    data['user_name'] = username
+    if "completed" in data:
+        value = data['completed']
+        if value == "False":
+            data['completed'] = bool("False")
+        else:
+            data['completed'] = bool("True")
     todo = Todo(**data)
-    return jsonify(todo)
+    todo.save()
+    return jsonify(todo.to_dict())
+
+@app_views.route('/<username>/<todoId>', methods=['GET'], strict_slashes=False)
+def deleteTodo(username, todoId):
+    """This method deletes a todo based on it's ID"""
+    user = storage.get(User, username)
+    todos = user.todos
+    for todo in todos:
+        
+        if todo.to_dict()['id'] == todoId:
+            print(todo)
+            todo.delete()
+    user.save()
+    return jsonify({})
+
+@app_views.route('/<username>/todos/<todoId>', methods=['PUT'], strict_slashes=False)
+def updateTodo(username,  todoId):
+    """Updates the todo with given parameters"""
+    user = storage.get(User, username)
+    ignore = ['user_name', 'id', '__class__', 'created_at', 'updated_at']
+    todos = user.todos
+    for todo in todos:
+        if todo.to_dict()['id'] == todoId:
+            data = request.get_json()
+            if not data:
+                return jsonify({"Error": "Not a JSON"})
+            for k,v in data.items():
+                if k not in ignore:
+                    setattr(todo, k, v)
+            todo.to_dict()['updated_at'] = datetime.now()
+    user.save()
+    return jsonify(todo.to_dict())
+
+# Location Reminder Endpoints
+@app_views.route('/<username>/<todoId>/<locationId>/locationReminder', strict_slashes=False)
+def create_LR(username, locationId, todoId):
+    """Creates a locationreminder """
+    user = storage.get(User, username)
+    data = request.get_json()
+    if not data:
+        return jsonify({"Error": "Not a valid JSON"})
+    
+    data['user_name'] = username
+    data['todo_id'] = todoId
+    data['location_id'] = locationId
+
+    LocationReminder(**data)
+'''
+def delete_LR(username, todoId, locationId):
+    """Removes a loction reminder from the storage"""
+    user = storage.get(User, username)
+    location = storage.get(Location, locationId)
+    todo = storage.get(Todo, todoId)
+'''
 
 
 @app_views.route('/admin', strict_slashes=False)

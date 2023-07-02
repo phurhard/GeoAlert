@@ -44,7 +44,7 @@ class BaseModel:
     def __str__(self):
         """ String representation"""
         if self.__class__.__name__ == 'User':
-            return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.username, self.__dict__)
+            return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.username, self.__dict__) # type: ignore
         else:
             return "[{:s}] ({:s}) {}".format(self.__class__.__name__, self.id, self.__dict__)
 
