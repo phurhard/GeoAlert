@@ -148,10 +148,44 @@ def updateTodo(username,  todoId):
     user.save()
     return jsonify(todo.to_dict())
 
+# Location
+@app_views.route('/<username>/location', strict_slashes=False)
+def create_L(username):
+    """Creates a location class for a user """
+    user = storage.get(User, username)
+    data = request.get_json()
+    data['user_name'] = username
+    location = Location(**data)
+    return jsonify({location.to_dict()})
+
+@app_views.route('/<username>/<locationId>', strict_slashes=False)
+def update_L(username, locationId):
+    """Updates location detail"""
+    user = storage.get(User, username)
+    locations = user.location
+    for location in locations:
+        if location.to_dict()['id'] == locationId:
+            data = request.get_json()
+            for k, v in data.items():
+                setattr(location.to_dict(), k, v)
+            user.save()
+            return jsonify(location.to_dict())
+
+@app_views.route('/<username>/locations/<locationId>', strict_slashes=False)
+def delete_L(username, locationId):
+    """Deletes a location resource"""
+    user = storage.get(User, username)
+    locations = user.location
+    for location in locations:
+        if location.to_dict()['id'] == locationId:
+            location.delete()
+    user.save()
+    return jsonify({})
+
 # Location Reminder Endpoints
 @app_views.route('/<username>/<todoId>/<locationId>/locationReminder', strict_slashes=False)
 def create_LR(username, locationId, todoId):
-    """Creates a locationreminder """
+    """Creates a location based task reminder """
     user = storage.get(User, username)
     data = request.get_json()
     if not data:
@@ -161,14 +195,23 @@ def create_LR(username, locationId, todoId):
     data['todo_id'] = todoId
     data['location_id'] = locationId
 
-    LocationReminder(**data)
-'''
-def delete_LR(username, todoId, locationId):
-    """Removes a loction reminder from the storage"""
+    locaRemind = LocationReminder(**data)
+    return jsonify(locaRemind.to_dict())
+
+@app_views.route('/<username>/<locationReminderId>', methods=['DELETE'], strict_slashes=False)
+def delete_LR(username, locationReminderId):
+    """Removes a location reminder from the storage"""
     user = storage.get(User, username)
-    location = storage.get(Location, locationId)
-    todo = storage.get(Todo, todoId)
-'''
+    locoRemind = user.locationReminder
+    for lr in locoRemind:
+        if lr.to_dict()['id'] == locationReminderId:
+            lr.delete()
+    return jsonify({})
+
+
+
+
+
 
 
 @app_views.route('/admin', strict_slashes=False)
