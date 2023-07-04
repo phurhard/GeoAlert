@@ -149,33 +149,46 @@ def updateTodo(username,  todoId):
     return jsonify(todo.to_dict())
 
 # Location
-@app_views.route('/<username>/location', strict_slashes=False)
+@app_views.route('/<username>/location', methods=['POST'], strict_slashes=False)
 def create_L(username):
     """Creates a location class for a user """
     user = storage.get(User, username)
     data = request.get_json()
     data['user_name'] = username
     location = Location(**data)
-    return jsonify({location.to_dict()})
+    location.save()
+    return jsonify(location.to_dict())
 
-@app_views.route('/<username>/<locationId>', strict_slashes=False)
+@app_views.route('/<username>/location/<locationId>', strict_slashes=False)
+def get_L(username, locationId):
+    """Gets a location based on it id"""
+    user = storage.get(User, username)
+    
+    locations = user.locations
+    for location in locations:
+        if location.to_dict()['id'] == locationId:
+            return jsonify(location.to_dict())
+    #return jsonify({"Error": "There is no Location data for this user"})
+@app_views.route('/<username>/location/<locationId>', methods=['PUT'], strict_slashes=False)
 def update_L(username, locationId):
     """Updates location detail"""
     user = storage.get(User, username)
-    locations = user.location
+    locations = user.locations
     for location in locations:
         if location.to_dict()['id'] == locationId:
+            #print(location.to_dict())
             data = request.get_json()
             for k, v in data.items():
-                setattr(location.to_dict(), k, v)
+                setattr(location, k, v)
+            location.to_dict()['updated_at'] = datetime.utcnow()
             user.save()
             return jsonify(location.to_dict())
 
-@app_views.route('/<username>/locations/<locationId>', strict_slashes=False)
+@app_views.route('/<username>/location/<locationId>', methods=['DELETE'], strict_slashes=False)
 def delete_L(username, locationId):
     """Deletes a location resource"""
     user = storage.get(User, username)
-    locations = user.location
+    locations = user.locations
     for location in locations:
         if location.to_dict()['id'] == locationId:
             location.delete()
@@ -183,10 +196,10 @@ def delete_L(username, locationId):
     return jsonify({})
 
 # Location Reminder Endpoints
-@app_views.route('/<username>/<todoId>/<locationId>/locationReminder', strict_slashes=False)
+@app_views.route('/<username>/<todoId>/<locationId>/locationReminder', methods=['POST'], strict_slashes=False)
 def create_LR(username, locationId, todoId):
     """Creates a location based task reminder """
-    user = storage.get(User, username)
+    
     data = request.get_json()
     if not data:
         return jsonify({"Error": "Not a valid JSON"})
@@ -196,6 +209,7 @@ def create_LR(username, locationId, todoId):
     data['location_id'] = locationId
 
     locaRemind = LocationReminder(**data)
+    locaRemind.save()
     return jsonify(locaRemind.to_dict())
 
 @app_views.route('/<username>/<locationReminderId>', methods=['DELETE'], strict_slashes=False)
@@ -206,13 +220,26 @@ def delete_LR(username, locationReminderId):
     for lr in locoRemind:
         if lr.to_dict()['id'] == locationReminderId:
             lr.delete()
-    return jsonify({})
-
-
-
-
-
-
+            user.save()
+            return jsonify({"Success": "Location Reminder deleted"})
+    return jsonify({"Error": "Location Reminder could not be found"})
+    
+@app_views.route('/<username>/<locationReminderId>', methods=["PUT"], strict_slashes=False)
+def update_LR(username, locationReminderId):
+    """Updates the location reminder"""
+    ignore = ['updated_at', 'created_at', 'user_name', 'id']
+    user = storage.get(User, username)
+    locationReminders = user.loctionReminder
+    for locationRemind in locationReminders:
+        if locationRemind.to_dict()['id'] == locationReminderId:
+            data = request.get_json()
+            if 'activated' in data:
+                data['activated'] = bool(data['activated'])
+            for k, v in data.items():
+                if k not in ignore:
+                    setattr(locationRemind, k, v)
+            locationRemind['updated_at'] = datetime.utcnow()
+        return jsonify(locationRemind.to_dict)
 
 @app_views.route('/admin', strict_slashes=False)
 def all():
