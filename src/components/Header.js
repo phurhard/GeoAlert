@@ -1,4 +1,5 @@
 import React from "react";
+import hamburger from "./hamburger";
 
 function Header() {
   return (
@@ -14,7 +15,7 @@ function Header() {
           <div className="date">20th-May-2098</div>
         </div>
         <div className="col d-flex justify-content-end">
-          {" "}
+          <hamburger />
           <div className="box "></div>
         </div>
       </nav>
