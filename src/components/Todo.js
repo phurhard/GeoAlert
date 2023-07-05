@@ -8,7 +8,7 @@ import timer from "../assets/images/timer.svg";
 import close from "../assets/images/close-circle.svg";
 function Todo() {
   return (
-    <div className="todo-container col-md-6 col-lg-4 col-xl-3">
+    <div className="todo-container">
       <div className="row">
         <div className="col-1  "></div>
         <div className="item-title col-6  "> Get FoodStuffs</div>

@@ -16,7 +16,7 @@ header {
   background-color: #1f9e59;
 }
 
-header>nav{
+header > nav {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -59,15 +59,15 @@ header>nav{
   transform: translateX(0);
 }
 
-span.close{
+span.close {
   display: block;
   text-align: right;
   margin: 10px;
   cursor: pointer;
 }
 
-span.close:hover{
-  font-size:larger;
+span.close:hover {
+  font-size: larger;
 }
 
 ul {
@@ -78,12 +78,12 @@ ul {
 
 li {
   margin-bottom: 10px;
-  
+
   padding: 5px;
   border-radius: 5px;
 }
 
-li:hover{
+li:hover {
   background-color: tomato;
   font-weight: 900;
   color: white;
@@ -370,11 +370,7 @@ input[type="time"].form-control {
 }
 
 @media only screen and (min-width: 576px) {
-  .newtask-container {
-    width: 50%;
-  }
-  .today-task-container {
-    width: 50%;
-    margin: 0 auto;
+  .main-container {
+    width: 576px;
   }
 }

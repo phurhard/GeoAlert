@@ -5,7 +5,7 @@ import no_task from "../assets/images/no-task.svg";
 function Home() {
   return (
     <div class="main">
-      <div class="main-item d-none">
+      <div class="main-item">
         <div className="what-are-we">
           <h5>What are we doing today</h5>
         </div>
@@ -30,7 +30,7 @@ function Home() {
           </div>
         </div>
       </div>
-      <div class="main-no-item">
+      <div class="main-no-item d-none">
         <p class="first-p">You don't have any tasks yet</p>
         <img src={no_task} alt="" style={{ width: "100%" }} />
         <p class="second-p">Tasks will appear as soon as you add them here</p>

@@ -8,13 +8,13 @@ import Header from "./components/Header";
 
 function App() {
   return (
-    <div className="container-fluid g-0">
+    <div className="container-fluid g-0 main-container">
       <Header />
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/TodoList" element={<TodoList />} />
-          <Route path="/NewTask" element={<NewTask />} />
+          <Route path="/todolist" element={<TodoList />} />
+          <Route path="/newtask" element={<NewTask />} />
         </Routes>
       </Router>
     </div>
