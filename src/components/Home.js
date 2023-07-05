@@ -1,9 +1,12 @@
 import React from "react";
 import TodayTasks from "./TodayTasks";
-import { Link } from "react-router-dom";
+import TodoList from "./TodoList"
+import NewTask from "./NewTask"
+import { BrowserRouter as Route, Router, Link, Routes } from "react-router-dom";
 import no_task from "../assets/images/no-task.svg";
 function Home() {
   return (
+    <Router>
     <div class="main">
       <div class="main-item">
         <div className="what-are-we">
@@ -20,6 +23,7 @@ function Home() {
             <div className="status col-2 g-0">Status</div>
           </div>
           <TodayTasks />
+          
           <div className="show-all-tasks text-end ">
             <Link
               to="/todolist"
@@ -28,6 +32,7 @@ function Home() {
               Show all
             </Link>
           </div>
+          
         </div>
       </div>
       <div class="main-no-item d-none">
@@ -35,10 +40,15 @@ function Home() {
         <img src={no_task} alt="" style={{ width: "100%" }} />
         <p class="second-p">Tasks will appear as soon as you add them here</p>
         <div class="button-center">
-          <button> Add Tasks</button>
+          <button> <Link to='/newtask'>Add Tasks</Link></button>
         </div>
       </div>
+      <Routes>
+        <Route path="/newtask" element={<NewTask />} />
+        <Route path="/todolist" element={<TodoList />} />
+      </Routes>
     </div>
+    </Router>
   );
 }
 
