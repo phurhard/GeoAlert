@@ -6,7 +6,7 @@ import { BrowserRouter as Route, Router, Link, Routes } from "react-router-dom";
 import no_task from "../assets/images/no-task.svg";
 function Home() {
   return (
-    <Router>
+    // <Router>
     <div class="main">
       <div class="main-item">
         <div className="what-are-we">
@@ -43,12 +43,10 @@ function Home() {
           <button> <Link to='/newtask'>Add Tasks</Link></button>
         </div>
       </div>
-      <Routes>
-        <Route path="/newtask" element={<NewTask />} />
-        <Route path="/todolist" element={<TodoList />} />
-      </Routes>
+      
+      
     </div>
-    </Router>
+    
   );
 }
 

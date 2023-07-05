@@ -53,7 +53,7 @@ function NewTask() {
           </div>
         </div>
       </form>
-      <p>Add Location?</p>
+      <p >Add Location?</p>
       <div className="d-flex justify-content-end">
         <button className="">ADD TASK</button>
       </div>
