@@ -13,8 +13,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/todolist" element={<TodoList />} />
-          <Route path="/newtask" element={<NewTask />} />
+          <Route path="/TodoList" element={<TodoList />} />
+          <Route path="/NewTask" element={<NewTask />} />
         </Routes>
       </Router>
     </div>

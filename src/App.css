@@ -14,14 +14,18 @@ body {
 header {
   padding: 3.3rem 2rem 2.7rem 2rem;
   background-color: #1f9e59;
-  /* padding-bottom: 2.7rem; */
 }
 
+header>nav{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+/* start of hamburger css */
 .App {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  height: 100vh;
 }
 
 .hamburger {
@@ -55,6 +59,17 @@ header {
   transform: translateX(0);
 }
 
+span.close{
+  display: block;
+  text-align: right;
+  margin: 10px;
+  cursor: pointer;
+}
+
+span.close:hover{
+  font-size:larger;
+}
+
 ul {
   list-style: none;
   padding: 0;
@@ -63,6 +78,15 @@ ul {
 
 li {
   margin-bottom: 10px;
+  
+  padding: 5px;
+  border-radius: 5px;
+}
+
+li:hover{
+  background-color: tomato;
+  font-weight: 900;
+  color: white;
 }
 
 /* end of hamburger */

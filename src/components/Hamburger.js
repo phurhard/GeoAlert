@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './App.css';
+import '../App.css';
 
-const hamburger = () => {
+const Hamburger = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggle = () => {
@@ -16,14 +16,16 @@ const hamburger = () => {
         <div className="line"></div>
       </div>
       <div className={`menu ${isOpen ? 'open' : ''}`}>
+        <span className='close' onClick={handleToggle}>x</span>
         <ul>
           <li>Home</li>
           <li>About</li>
           <li>Contact</li>
         </ul>
       </div>
+
     </div>
   );
 };
 
-export default hamburger;
+export default Hamburger;
