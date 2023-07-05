@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "../App.css";
-import App from "../App";
-import Home from "./Home";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+// import App from "../App";
+// import Home from "./Home";
+import { Link } from "react-router-dom";
 const Hamburger = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -11,22 +11,6 @@ const Hamburger = () => {
   };
 
   return (
-    // <div className="App">
-    //   <div className={`hamburger ${isOpen ? 'open' : ''}`} onClick={handleToggle}>
-    //     <div className="line"></div>
-    //     <div className="line"></div>
-    //     <div className="line"></div>
-    //   </div>
-    //   <div className={`menu ${isOpen ? 'open' : ''}`}>
-    //     <span className='close' onClick={handleToggle}>x</span>
-    //     <ul>
-    //       <li>Home</li>
-    //       <li>About</li>
-    //       <li>Contact</li>
-    //     </ul>
-    //   </div>
-
-    // </div>
     <div className="App">
       <div
         className={`nav-icon1 ${isOpen ? "open" : ""}`}
@@ -36,11 +20,17 @@ const Hamburger = () => {
         <span></span>
         <span></span>
       </div>
-      <ul>
-        <li>Home</li>
-        <li>About</li>
-        <li>Contact</li>
-      </ul>{" "}
+      <ul className={`nav-links ${isOpen ? "open" : ""}`}>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/newtask">About</Link>
+        </li>
+        <li>
+          <Link to="/todotask">Contact</Link>
+        </li>
+      </ul>
     </div>
   );
 };

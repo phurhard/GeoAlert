@@ -9,8 +9,8 @@ import Header from "./components/Header";
 function App() {
   return (
     <div className="container-fluid g-0 main-container">
-      <Header />
       <Router>
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/todolist" element={<TodoList />} />
