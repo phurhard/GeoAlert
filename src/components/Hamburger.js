@@ -22,13 +22,16 @@ const Hamburger = () => {
       </div>
       <ul className={`nav-links ${isOpen ? "open" : ""}`}>
         <li>
-          <Link to="/">Home</Link>
+          <Link to="/">My Tasks</Link>
         </li>
         <li>
-          <Link to="/newtask">About</Link>
+          <Link to="/newtask">Location Based Tasks</Link>
         </li>
         <li>
-          <Link to="/todotask">Contact</Link>
+          <Link to="/todotask">Profile</Link>
+        </li>
+        <li>
+          <Link to="/todotask">Log out</Link>
         </li>
       </ul>
     </div>

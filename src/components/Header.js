@@ -14,7 +14,7 @@ function Header() {
           </div>
           <div className="date">20th-May-2098</div>
         </div>
-        <div className="col-2 g-0">
+        <div className="col-2 g-0 d-flex justify-content-end">
           <Hamburger />
         </div>
       </nav>
