@@ -1,13 +1,9 @@
 import React from "react";
 
-function NewLocation() {
-  // calling the foursquare places api
-  // request =
+function LocationBasedTasks() {
   return (
     <div>
-      <section className="go-back">
-        <span>&lt; &nbsp; Back</span>
-      </section>
+      <h3>All your location based tasks in one place</h3>
       <section id="search">
         <label for="search-input">
           <i class="fa fa-search" aria-hidden="true"></i>
@@ -27,8 +23,9 @@ function NewLocation() {
       <section className="location-save">
         <div className="row"></div>
       </section>
+      <LocationBasedTask />
     </div>
   );
 }
 
-export default NewLocation;
+export default LocationBasedTasks;
