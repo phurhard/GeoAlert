@@ -1,10 +1,11 @@
 import React from "react";
+import { BrowserRouter as Link } from 'react-router-dom'
 
 function NewTask() {
   return (
     <div className="main newtask-container">
       <h5>Add a new Task</h5>
-      <form>
+      <form method="POST" action="127.0.0.1:5000/api">
         <div class="mb-3">
           <label for="title" className="form-label">
             Title
@@ -53,9 +54,12 @@ function NewTask() {
           </div>
         </div>
       </form>
-      <p >Add Location?</p>
+      <p><Link to='/location'>Add Location?</Link></p>
+      {/* Make this add location clickable so that when it is
+      clicked it redirect to the page to add location */}
       <div className="d-flex justify-content-end">
-        <button className="">ADD TASK</button>
+        <button className=""><Link to='/todolist'>ADD TASK</Link></button>
+        {/* the button above redirects to the page where all tasks are shown */}
       </div>
     </div>
   );
