@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
+import "bootstrap/dist/css/bootstrap.css";
 import {
   BrowserRouter as Router,
   Route,
@@ -8,26 +9,19 @@ import {
 import Home from "./components/Home";
 import TodoList from "./components/TodoList";
 import NewTask from "./components/NewTask";
-import Header from "./components/Header";
+// import Header from "./components/Header";
 import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 import { AuthProvider, AuthContext } from "./components/AuthContext";
 
 function App() {
   const { loggedIn } = useContext(AuthContext);
 
-  const PrivateRoute = ({ element: Component, ...rest }) => {
-    return loggedIn ? (
-      <Route element={<Component />} {...rest} />
-    ) : (
-      <Navigate to="/login" replace />
-    );
-  };
-
   return (
     <div className="container-fluid g-0 main-container">
       <AuthProvider>
         <Router>
-          <Header />
+          {/* <Header /> */}
           <Routes>
             <Route
               path="/"
@@ -37,8 +31,20 @@ function App() {
               path="/login"
               element={loggedIn ? <Navigate to="/" replace /> : <Login />}
             />
-            <PrivateRoute path="/todolist" element={TodoList} />
-            <PrivateRoute path="/newtask" element={NewTask} />
+            <Route
+              path="/todolist"
+              element={
+                loggedIn ? <TodoList /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/newtask"
+              element={
+                loggedIn ? <NewTask /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/*" element="<Error />" />
           </Routes>
         </Router>
       </AuthProvider>

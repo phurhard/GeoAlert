@@ -9,15 +9,32 @@ from api.v1.views import app_views
 from datetime import datetime
 from flask import abort, jsonify, make_response, request
 from flasgger.utils import swag_from
+from flask_jwt_extended import (
+    JWTManager, create_access_token, jwt_required, get_jwt_identity
+)
+
+@app_views.route('/login', methods=['POST'], strict_slashes=False)
+def login():
+    """User login"""
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    user = storage.get(User, username)
+    if not user or not user.password == password:
+        return jsonify({'error': 'Invalid username or password.'}), 401
+
+    access_token = create_access_token(identity=user.username)
+    return jsonify(access_token=access_token)
 
 
-@app_views.route('/login/<username>', methods=['GET'], strict_slashes=False)
-def login(username):
-    '''users login'''
-    try:
-        user = storage.get(User, username)
-    except Exception as e:
-        return jsonify({'User': "User does not exist"})
+# @app_views.route('/login/<username>', methods=['GET'], strict_slashes=False)
+# def login(username):
+#     '''users login'''
+#     try:
+#         user = storage.get(User, username)
+#     except Exception as e:
+#         return jsonify({'User': "User does not exist"})
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 # @swag_from('documentation/user/all_users.yml')
@@ -67,7 +84,7 @@ def create_user():
     data = request.get_json()
     instance = User(**data)
     instance.save()
-    return make_response(jsonify(instance.to_dict()), 201)
+    return jsonify({'message': 'User registered successfully.'}), 201
 
 @app_views.route('/users/<username>', methods=['PUT'], strict_slashes=False)
 def put_user(username):

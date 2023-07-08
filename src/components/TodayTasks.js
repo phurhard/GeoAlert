@@ -1,17 +1,21 @@
 import React from "react";
 import Todaytask from "./Todaytask";
 import TodayMap from "./TodayMap";
+import Header from "./Header";
 // import { Link } from "react-router-dom";
 function TodayTasks() {
   return (
-    <div>
-      <Todaytask />
-      <Todaytask />
-      <Todaytask />
-      <Todaytask />
+    <>
+      <Header />
+      <div>
+        <Todaytask />
+        <Todaytask />
+        <Todaytask />
+        <Todaytask />
 
-      <TodayMap />
-    </div>
+        <TodayMap />
+      </div>
+    </>
   );
 }
 
