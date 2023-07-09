@@ -7,9 +7,14 @@ from flask import Flask, render_template, make_response, jsonify
 from flask_cors import CORS
 from flasgger import Swagger
 from flasgger.utils import swag_from
+from flask_jwt_extended import (
+    JWTManager, create_access_token, jwt_required, get_jwt_identity
+)
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+app.config['JWT_SECRET_KEY'] = 'GeoAlert'  # Replace with your secret key
+jwt = JWTManager(app)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
