@@ -13,19 +13,18 @@ function LocationBasedTasks() {
           </label>
           <input
             id="search-input"
-            class="form-control input-lg"
-            placeholder="Search icons"
-            autocomplete="off"
-            spellcheck="false"
-            autocorrect="off"
-            tabindex="1"
+            className="form-control input-lg"
+            placeHolder="Search icons"
+            autoComplete="off"
+            spellCheck="false"
+            autoCorrect="off"
+            tabIndex="1"
           />
         </section>
         <section className="map"></section>
         <section className="location-save">
           <div className="row"></div>
         </section>
-        <LocationBasedTask />
       </div>
     </>
   );

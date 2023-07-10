@@ -10,17 +10,17 @@ function NewLocation() {
       </section>
       <section id="search">
         <label for="search-input">
-          <i class="fa fa-search" aria-hidden="true"></i>
-          <span class="sr-only">Search icons</span>
+          <i className="fa fa-search" aria-hidden="true"></i>
+          <span className="sr-only">Search icons</span>
         </label>
         <input
           id="search-input"
-          class="form-control input-lg"
-          placeholder="Search icons"
-          autocomplete="off"
-          spellcheck="false"
-          autocorrect="off"
-          tabindex="1"
+          className="form-control input-lg"
+          placeHolder="Search icons"
+          autoComplete="off"
+          spellCheck="false"
+          autoCorrect="off"
+          tabIndex="1"
         />
       </section>
       <section className="map"></section>

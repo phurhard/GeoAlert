@@ -36,14 +36,6 @@ const Login = () => {
     }
   };
 
-  // const handleLogout = () => {
-  //   // Remove the token from storage
-  //   localStorage.removeItem("token");
-
-  //   // Update the authentication state
-  //   setLoggedIn(false);
-  // };
-
   return (
     <div>
       <form onSubmit={handleLogin}>

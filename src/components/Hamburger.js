@@ -1,11 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "../App.css";
 import { Link } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 const Hamburger = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { loggedIn, setLoggedIn } = useContext(AuthContext);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
+  };
+  const handleLogout = (e) => {
+    e.preventDefault();
+    // Remove the token from storage
+    localStorage.removeItem("token");
+
+    // Update the authentication state
+    setLoggedIn(false);
+    console.log(loggedIn);
   };
 
   return (
@@ -23,13 +34,15 @@ const Hamburger = () => {
           <Link to="/">My Tasks</Link>
         </li>
         <li>
-          <Link to="/newtask">Location Based Tasks</Link>
+          <Link to="/locationbasedtask">Location Based Tasks</Link>
         </li>
         <li>
           <Link to="/todotask">Profile</Link>
         </li>
         <li>
-          <Link to="/todotask">Log out</Link>
+          <Link to="/login" onClick={handleLogout}>
+            Log out
+          </Link>
         </li>
       </ul>
     </div>
