@@ -71,19 +71,22 @@ class DBStorage:
             self.__session.delete(i)
         self.__session.commit()
 
-    def get(self, cls, unit):
+    def get(self, cls, unit=None):
         """Returs the object based on it's id.
         will later need to change the id to something that can be easy to implement"""
         if cls not in classes.values():
             return None
         all_cls = models.storage.all(cls)
-        if cls == eval('User'):
+        if unit is None:
+            return all_cls #[cls]
+        else:
+            if cls == eval('User'):
+                for value in all_cls.values():
+                    if (value.username == unit):
+                        return value
             for value in all_cls.values():
-                if (value.username == unit):
+                if (value.id == unit):
                     return value
-        for value in all_cls.values():
-            if (value.id == unit):
-                return value
 
     def count(self, cls=None):
         """Count the number of objects in the storage"""

@@ -18,6 +18,8 @@ from flask_jwt_extended import (
 def login():
     """User login"""
     data = request.get_json()
+    if not data:
+        print('Data is not JSON')
     username = data.get('username')
     password = data.get('password')
     user = storage.get(User, username)
@@ -71,6 +73,7 @@ def delete_user(username):
 
     return make_response(jsonify({}), 200)
 
+# should be used for signup
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
     """Creates a new user"""
@@ -112,6 +115,7 @@ def get_Todos(username):
         abort(404)
     for todo in user.todos:
         Todo[k] = todo.to_dict()
+        
         k += 1
     return jsonify(Todo)
 
@@ -166,6 +170,16 @@ def updateTodo(username,  todoId):
     return jsonify(todo.to_dict())
 
 # Location
+@app_views.route('/locations', strict_slashes=False)
+def get_Locations():
+    """Gets all the location data. will edit
+    it to get only location based on a user"""
+    data = storage.all(Location)
+    dictLocation = {}
+    for k, v in data.items():
+        dictLocation[k] = v.to_dict()
+    
+    return jsonify({"contentts": dictLocation})
 @app_views.route('/<username>/location', methods=['POST'], strict_slashes=False)
 def create_L(username):
     """Creates a location class for a user """
