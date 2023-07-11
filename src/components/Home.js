@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import TodayTasks from "./TodayTasks";
-
 import Header from "./Header";
-
 import TodoList from "./TodoList";
 import NewTask from "./NewTask";
 import MapLocation from "./MapLocation";
-
 import { BrowserRouter as Route, Router, Link, Routes } from "react-router-dom";
-import MapLocation from "./MapLocation";
-
 import no_task from "../assets/images/no-task.svg";
 function Home() {
   return (
@@ -31,8 +26,8 @@ function Home() {
               <div className="status col-2 g-0">Status</div>
             </div>
             <TodayTasks />
-            <div>{display}</div>
-            <div>{error}</div>
+            {/* <div>{display}</div>
+            <div>{error}</div> */}
 
             <div className="show-all-tasks text-end ">
               <Link
