@@ -1,10 +1,12 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { setLoggedIn } = useContext(AuthContext);
+  const { loggedIn, setLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,9 +25,11 @@ const Login = () => {
 
       // Store the token in local storage or session storage
       localStorage.setItem("token", token);
-
+      console.log("Login");
       // Update the authentication state
       setLoggedIn(true);
+      // console.log(loggedIn);
+      navigate("/");
     } else {
       // Handle authentication error
       console.log("Login failed");

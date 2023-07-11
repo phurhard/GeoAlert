@@ -18,37 +18,38 @@ function App() {
   const { loggedIn } = useContext(AuthContext);
 
   return (
-    <div className="container-fluid g-0 main-container">
-      <AuthProvider>
+    <AuthProvider>
+      <div className="container-fluid g-0 main-container">
         <Router>
           {/* <Header /> */}
           <Routes>
             <Route
               path="/"
-              element={loggedIn ? <Home /> : <Navigate to="/login" replace />}
+              element={!loggedIn ? <Home /> : <Navigate to="/login" replace />}
             />
             <Route
               path="/login"
-              element={loggedIn ? <Navigate to="/" replace /> : <Login />}
+              element={!loggedIn ? <Navigate to="/" replace /> : <Login />}
             />
+            {/* <Route path="/login" element={<Login />} /> */}
             <Route
               path="/todolist"
               element={
-                loggedIn ? <TodoList /> : <Navigate to="/login" replace />
+                !loggedIn ? <TodoList /> : <Navigate to="/login" replace />
               }
             />
             <Route
               path="/newtask"
               element={
-                loggedIn ? <NewTask /> : <Navigate to="/login" replace />
+                !loggedIn ? <NewTask /> : <Navigate to="/login" replace />
               }
             />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/*" element="<Error />" />
-          </Routes>
+          </Routes>{" "}
         </Router>
-      </AuthProvider>
-    </div>
+      </div>
+    </AuthProvider>
   );
 }
 

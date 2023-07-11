@@ -7,6 +7,7 @@ from models import storage
 from models.locationreminder import LocationReminder
 from api.v1.views import app_views
 from datetime import datetime
+from hashlib import md5
 from flask import abort, jsonify, make_response, request
 from flasgger.utils import swag_from
 from flask_jwt_extended import (
@@ -21,9 +22,8 @@ def login():
         print('Data is not JSON')
     username = data.get('username')
     password = data.get('password')
-
     user = storage.get(User, username)
-    if not user or not user.password == password:
+    if not user or not user.password == md5(password.encode()).hexdigest():
         return jsonify({'error': 'Invalid username or password.'}), 401
 
     access_token = create_access_token(identity=user.username)

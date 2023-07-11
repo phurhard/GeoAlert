@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useContext } from "react";
+import { AuthContext } from "./AuthContext";
 
 const SignUp = () => {
+  const { loggedIn, setLoggedIn } = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -32,7 +35,7 @@ const SignUp = () => {
     setEmail("");
     setPassword("");
   };
-
+  console.log(loggedIn);
   return (
     <div>
       <h1>Signup</h1>

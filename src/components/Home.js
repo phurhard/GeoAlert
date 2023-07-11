@@ -7,8 +7,8 @@ function Home() {
   return (
     <>
       <Header />
-      <div class="main">
-        <div class="main-item">
+      <div className="main">
+        <div className="main-item">
           <div className="what-are-we">
             <h5>What are we doing today</h5>
           </div>
@@ -34,11 +34,13 @@ function Home() {
             </div>
           </div>
         </div>
-        <div class="main-no-item d-none">
-          <p class="first-p">You don't have any tasks yet</p>
+        <div className="main-no-item d-none">
+          <p className="first-p">You don't have any tasks yet</p>
           <img src={no_task} alt="" style={{ width: "100%" }} />
-          <p class="second-p">Tasks will appear as soon as you add them here</p>
-          <div class="button-center">
+          <p className="second-p">
+            Tasks will appear as soon as you add them here
+          </p>
+          <div className="button-center">
             <button>
               {" "}
               <Link to="/newtask">Add Tasks</Link>
