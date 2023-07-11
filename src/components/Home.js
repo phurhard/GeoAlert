@@ -2,42 +2,43 @@ import React from "react";
 import TodayTasks from "./TodayTasks";
 import TodoList from "./TodoList"
 import NewTask from "./NewTask"
+import MapLocation from './MapLocation'
 import { BrowserRouter as Route, Router, Link, Routes } from "react-router-dom";
 import no_task from "../assets/images/no-task.svg";
 function Home() {
   // this is the function dat will render the map image
-  async function mapfunction() {
-    if (navigator.geolocation) {
-      naviiiiigator.geolocation.getCurrentPosition(success, error);
-    } else {
-      alert("Please enable location services on your device")
-    }
-    async function success(position) {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
+    // async function mapfunction() {
+    //   if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(success, error);
+    //   } else {
+    //     alert("Please enable location services on your device")
+    //   }
+    //   async function success(position) {
+    //     const latitude = position.coords.latitude;
+    //     const longitude = position.coords.longitude;
 
-      const userPosition = { lat: latitude, lng: longitude}
-      const { Map } = await google.maps.importLibrary("maps");
-      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    //     const userPosition = { lat: latitude, lng: longitude}
+    //     const { Map } = await google.maps.importLibrary("maps");
+    //     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-      const map = new Map(document.getElementsByClassName("map"), {
-        zoom: 5,
-        center: userPosition,
-        mapId: "currentLocation"
-      });
-      const marker = new AdvancedMarkerElement({
-        map:map,
-        position: userPosition,
-        title: "MyLocation"
-      });
-    }
+    //     const map = new Map(document.getElementsByClassName("map"), {
+    //       zoom: 5,
+    //       center: userPosition,
+    //       mapId: "currentLocation"
+    //     });
+    //     const marker = new AdvancedMarkerElement({
+    //       map:map,
+    //       position: userPosition,
+    //       title: "MyLocation"
+    //     });
+    //   }
 
-    function error(err) {
-      alert("Error, unable to retrieveee map at the moment")
-    }
-  }
+    //   function error(err) {
+    //     alert("Error, unable to retrieve map at the moment")
+    //   }
+    // }
 
-  mapfunction()
+    // mapfunction()
   return (
     // <Router>
     <div class="main">
@@ -67,6 +68,7 @@ function Home() {
           </div>
           {/* this section holds the map showwing the current location of the use, will be updated with markers showing the location based tasks */}
           <div className="map markers-today">
+            <MapLocation />
           </div>
           
         </div>
