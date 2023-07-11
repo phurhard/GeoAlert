@@ -18,6 +18,8 @@ from flask_jwt_extended import (
 def login():
     """User login"""
     data = request.get_json()
+    if not data:
+        print('Data is not JSON')
     username = data.get('username')
     password = data.get('password')
     user = storage.get(User, username)
