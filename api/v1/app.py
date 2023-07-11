@@ -7,17 +7,20 @@ from flask import Flask, render_template, make_response, jsonify
 from flask_cors import CORS
 from flasgger import Swagger
 from flasgger.utils import swag_from
+from  flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+app.config['JWT_SECRET_KEY'] = "geoalert"
+jwt = JWTManager(app)
 app.register_blueprint(app_views)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
-#@app.teardown_appcontext
-#def close_db(error):
-#    """Closesandexits the storage"""
-#    storage.close()
+@app.teardown_appcontext
+def close_db(error):
+   """Closesandexits the storage"""
+   storage.close()
 
 
 @app.errorhandler(404)
