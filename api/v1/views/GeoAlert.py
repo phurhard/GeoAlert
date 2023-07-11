@@ -115,6 +115,7 @@ def get_Todos(username):
         abort(404)
     for todo in user.todos:
         Todo[k] = todo.to_dict()
+        
         k += 1
     return jsonify(Todo)
 
@@ -174,12 +175,11 @@ def get_Locations():
     """Gets all the location data. will edit
     it to get only location based on a user"""
     data = storage.all(Location)
-    print(data)
-
     dictLocation = {}
     for k, v in data.items():
-        dictLocation[k] = v
-    return jsonify(dictLocation)
+        dictLocation[k] = v.to_dict()
+    
+    return jsonify({"contentts": dictLocation})
 @app_views.route('/<username>/location', methods=['POST'], strict_slashes=False)
 def create_L(username):
     """Creates a location class for a user """

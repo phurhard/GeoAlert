@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import TodayTasks from "./TodayTasks";
 import Header from "./Header";
 import { BrowserRouter as Route, Router, Link, Routes } from "react-router-dom";
+import MapLocation from "./MapLocation";
 
 import no_task from "../assets/images/no-task.svg";
 function Home() {
 
   // function to render the home page
   const [display, setDisplay] = useState([])
+  const [error, setError] = useState(null)
   useEffect(() => {
     fetchDatabase();
   }, []);
@@ -19,9 +21,10 @@ function Home() {
       const response = await fetch ("http://localhost/api/locations")
       const data = response.json()
       console.log(data)
-      setDisplay(data)
+      // setDisplay(data)
     } catch (error) {
       console.log("Error getting database contents", error)
+      setError(error)
     }
   };
   return (
@@ -43,7 +46,8 @@ function Home() {
               <div className="status col-2 g-0">Status</div>
             </div>
             <TodayTasks />
-            <div>{display}</div>
+            <div>{ display }</div>
+            <div>{ error }</div>
 
             <div className="show-all-tasks text-end ">
               <Link
@@ -54,6 +58,7 @@ function Home() {
               </Link>
             </div>
           </div>
+          {/* <MapLocation /> */}
         </div>
         <div className="main-no-item d-none">
           <p className="first-p">You don't have any tasks yet</p>
