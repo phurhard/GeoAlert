@@ -1,32 +1,17 @@
 import React, { useEffect, useState } from "react";
 import TodayTasks from "./TodayTasks";
+
 import Header from "./Header";
+
+import TodoList from "./TodoList";
+import NewTask from "./NewTask";
+import MapLocation from "./MapLocation";
+
 import { BrowserRouter as Route, Router, Link, Routes } from "react-router-dom";
 import MapLocation from "./MapLocation";
 
 import no_task from "../assets/images/no-task.svg";
 function Home() {
-
-  // function to render the home page
-  const [display, setDisplay] = useState([])
-  const [error, setError] = useState(null)
-  useEffect(() => {
-    fetchDatabase();
-  }, []);
-
-
-  // function to request from data base
-  const fetchDatabase = async () => {
-    try {
-      const response = await fetch ("http://localhost/api/locations")
-      const data = response.json()
-      console.log(data)
-      // setDisplay(data)
-    } catch (error) {
-      console.log("Error getting database contents", error)
-      setError(error)
-    }
-  };
   return (
     <>
       <Header />
@@ -46,8 +31,8 @@ function Home() {
               <div className="status col-2 g-0">Status</div>
             </div>
             <TodayTasks />
-            <div>{ display }</div>
-            <div>{ error }</div>
+            <div>{display}</div>
+            <div>{error}</div>
 
             <div className="show-all-tasks text-end ">
               <Link
@@ -71,6 +56,27 @@ function Home() {
               {" "}
               <Link to="/newtask">Add Tasks</Link>
             </button>
+          </div>
+
+          <div className="today-task-head row">
+            <div className="title col-5 g-0">Title</div>
+            <div className="time col-3 g-0">Time</div>
+            <div className="location col-2 g-0">Location</div>
+            <div className="status col-2 g-0">Status</div>
+          </div>
+          <TodayTasks />
+
+          <div className="show-all-tasks text-end ">
+            <Link
+              to="/todolist"
+              className="link-underline link-underline-opacity-0"
+            >
+              Show all
+            </Link>
+          </div>
+          {/* this section holds the map showwing the current location of the use, will be updated with markers showing the location based tasks */}
+          <div className="map markers-today">
+            <MapLocation />
           </div>
         </div>
       </div>
