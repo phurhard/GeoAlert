@@ -71,6 +71,7 @@ def delete_user(username):
 
     return make_response(jsonify({}), 200)
 
+# should be used for signup
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
     """Creates a new user"""
