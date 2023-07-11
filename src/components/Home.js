@@ -1,9 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TodayTasks from "./TodayTasks";
 import Header from "./Header";
 import { BrowserRouter as Route, Router, Link, Routes } from "react-router-dom";
+
 import no_task from "../assets/images/no-task.svg";
 function Home() {
+
+  // function to render the home page
+  const [display, setDisplay] = useState([])
+  useEffect(() => {
+    fetchDatabase();
+  }, []);
+
+
+  // function to request from data base
+  const fetchDatabase = async () => {
+    try {
+      const response = await fetch ("http://localhost/api/locations")
+      const data = response.json()
+      console.log(data)
+      setDisplay(data)
+    } catch (error) {
+      console.log("Error getting database contents", error)
+    }
+  };
   return (
     <>
       <Header />
@@ -23,6 +43,7 @@ function Home() {
               <div className="status col-2 g-0">Status</div>
             </div>
             <TodayTasks />
+            <div>{display}</div>
 
             <div className="show-all-tasks text-end ">
               <Link

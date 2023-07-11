@@ -169,6 +169,17 @@ def updateTodo(username,  todoId):
     return jsonify(todo.to_dict())
 
 # Location
+@app_views.route('/locations', strict_slashes=False)
+def get_Locations():
+    """Gets all the location data. will edit
+    it to get only location based on a user"""
+    data = storage.all(Location)
+    print(data)
+
+    dictLocation = {}
+    for k, v in data.items():
+        dictLocation[k] = v
+    return jsonify(dictLocation)
 @app_views.route('/<username>/location', methods=['POST'], strict_slashes=False)
 def create_L(username):
     """Creates a location class for a user """
