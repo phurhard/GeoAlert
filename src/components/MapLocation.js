@@ -26,11 +26,11 @@ const MapLocation = ({ google }) => {
   };
 
   return (
-    <div style={{ width: '100%', height: '400px' }}>
+    <div style={{ width: '50%', height: '400px' }}>
       {location ? (
         <Map
           google={google}
-          zoom={14}
+          zoom={5}
           initialCenter={{ lat: location.latitude, lng: location.longitude }}
           center={{ lat: location.latitude, lng: location.longitude }}
         >
