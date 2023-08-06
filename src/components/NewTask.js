@@ -1,4 +1,5 @@
 import React from "react";
+
 import NewLocation from "./NewLocation";
 function NewTask() {
   return (
@@ -13,6 +14,7 @@ function NewTask() {
             <label for="title" className="form-label">
               Title
             </label>
+
             <input
               type="text"
               className="form-control"

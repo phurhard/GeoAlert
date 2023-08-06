@@ -23,6 +23,7 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 #def close_db(error):
 #    """Closesandexits the storage"""
 #    storage.close()
+# uncomment to test the close function of db
 
 
 @app.errorhandler(404)
