@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
+import React, { useEffect, useState } from "react";
+import { Map, Marker, GoogleApiWrapper } from "google-maps-react";
 
 const MapLocation = ({ google }) => {
   const [location, setLocation] = useState(null);
@@ -7,10 +7,7 @@ const MapLocation = ({ google }) => {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        handleSuccess,
-        handleError
-      );
+      navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
     } else {
       setError("Geolocation is not supported by your browser");
     }
@@ -26,15 +23,17 @@ const MapLocation = ({ google }) => {
   };
 
   return (
-    <div style={{ width: '100%', height: '400px' }}>
+    <div style={{ width: "50%", height: "400px" }}>
       {location ? (
         <Map
           google={google}
-          zoom={14}
+          zoom={5}
           initialCenter={{ lat: location.latitude, lng: location.longitude }}
           center={{ lat: location.latitude, lng: location.longitude }}
         >
-          <Marker position={{ lat: location.latitude, lng: location.longitude }} />
+          <Marker
+            position={{ lat: location.latitude, lng: location.longitude }}
+          />
         </Map>
       ) : (
         <p>{error || "Fetching location..."}</p>
@@ -44,5 +43,5 @@ const MapLocation = ({ google }) => {
 };
 
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyARnQvoDVFy3Rld8bDIWEjOoRmwhuouEB0'
+  apiKey: "AIzaSyARnQvoDVFy3Rld8bDIWEjOoRmwhuouEB0",
 })(MapLocation);

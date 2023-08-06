@@ -1,2 +1,3 @@
 node_modules/
-*.pyc
+models/engine/__pycache__/*.pyc
+models/__pycache__/*.pyc

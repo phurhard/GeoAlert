@@ -13,7 +13,7 @@ class Todo(BaseModel, Base):
     __tablename__ = 'todos'
     id = Column(String(255), primary_key=True)
     user_name = Column(String(128), ForeignKey('users.username'))
-    location_id = Column(String(28), ForeignKey('location.id'))
+    location_id = Column(String(128), ForeignKey('locations.id'))
     title = Column(String(255))
     description = Column(String(255))
     due_date = Column(DateTime, default=datetime.utcnow)
