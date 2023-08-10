@@ -5,11 +5,14 @@ import { useState } from "react";
 
 function Header() {
   const [username, setUsername] = useState("Guest");
+  // trying to set up the date  and time part
   // const [todayDate, setTodayDate] = useState(new Date());
   // // setting  the date
   // setInterval(() => {
   //   setTodayDate = new Date()
   // }, 1000);
+
+
   // calling the profile api
 
   const token = JSON.parse(localStorage.getItem('token'));
@@ -39,7 +42,7 @@ function Header() {
           <div className="greetings">
             <h3>Hello, { username }</h3>
           </div>
-          <div className="date">today</div>
+          <div className="date">today date and time should be here</div>
         </div>
         <div className="col-2 g-0 d-flex justify-content-end">
           <Hamburger />
