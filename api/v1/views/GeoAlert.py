@@ -23,21 +23,23 @@ def login():
     username = data.get('username')
     password = data.get('password')
     user = storage.get(User, username)
-    if not user or not user.password == md5(password.encode()).hexdigest():
+    encrpyt_password =  md5(password.encode()).hexdigest()  
+    if not user or (user.password != encrpyt_password and user.password != password):
+        
         return jsonify({'error': 'Invalid username or password.'}), 401
 
     access_token = create_access_token(identity=user.username)
     return jsonify(access_token=access_token)
 
 
-# @app_views.route('/login/<username>', methods=['GET'], strict_slashes=False)
-# def login(username):
-#     '''users login'''
-#     try:
-#         user = storage.get(User, username)
-#     except Exception as e:
-#         return jsonify({'User': "User does not exist"})
-
+@app_views.route('/profile', methods=['GET'], strict_slashes=False)
+@jwt_required()
+def profile():
+    '''users profile'''
+    username = get_jwt_identity()
+    user = storage.get(User, username)
+    return jsonify(user.to_dict())
+    
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 # @swag_from('documentation/user/all_users.yml')
 def get_users():

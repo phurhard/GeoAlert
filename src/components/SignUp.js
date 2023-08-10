@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
 const SignUp = () => {
@@ -25,7 +26,7 @@ const SignUp = () => {
       console.log("OK");
     } else {
       // Handle authentication error
-      console.log("Login failed");
+      console.log("Unable to create a new User");
     }
 
     // Clear the form fields after signup
@@ -37,51 +38,59 @@ const SignUp = () => {
   };
   console.log(loggedIn);
   return (
-    <div>
-      <h1>Signup</h1>
-      <form onSubmit={handleSignup}>
-        <label>
+    <div className="Signup-container">
+      <p>Turn your wanderlust to a to-do list with <b>GeoAlert</b><br/><i>where your dreams meet destinations</i></p>
+      <form className='signup-form' onSubmit={handleSignup}>
+        <label className="signup-label">
           Username:
           <input
             type="text"
+            className="signup-input"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </label>
-        <label>
+        <label className="signup-label">
           First Name:
           <input
             type="text"
+            className="signup-input"
             value={firstname}
             onChange={(e) => setFirstname(e.target.value)}
           />
         </label>
-        <label>
+        <label className="signup-label">
           Last Name:
           <input
             type="text"
+            className="signup-input"
             value={lastname}
             onChange={(e) => setLastname(e.target.value)}
           />
         </label>
-        <label>
+        <label className="signup-label">
           Email:
           <input
             type="email"
+            className="signup-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </label>
-        <label>
+        <label className="signup-label">
           Password:
           <input
             type="password"
+            className="signup-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button type="submit">Sign Up</button>
+        <button className="signup-btn" type="submit">Sign Up</button>
       </form>
+      <p className="login">Have an account? <span>
+      <Link to="/login">Log In</Link>
+          </span></p>
     </div>
   );
 };
