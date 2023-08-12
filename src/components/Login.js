@@ -28,7 +28,7 @@ const Login = () => {
       localStorage.setItem("token", JSON.stringify(token));
       console.log("Login");
       // console.log('token: ',JSON.parse(localStorage.getItem('token')));
-      alert('Logged in');
+      
       // Update the authentication state
       setLoggedIn(true);
       // console.log(loggedIn);

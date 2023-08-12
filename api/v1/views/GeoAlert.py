@@ -107,7 +107,7 @@ def put_user(username):
     storage.save()
     return make_response(jsonify(user.to_dict()), 200)
 
-@app_views.route('/<username>/todos', strict_slashes=False)
+@app_views.route('/<username>/todos', methods=["GET"], strict_slashes=False)
 def get_Todos(username):
     """Gets all todos relates to a user"""
     user = storage.get(User, username)

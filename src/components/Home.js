@@ -27,9 +27,6 @@ function Home() {
               <div className="status col-2 g-0">Status</div>
             </div>
             <TodayTasks />
-            {/* <div>{display}</div>
-            <div>{error}</div> */}
-
             <div className="show-all-tasks text-end ">
               <Link
                 to="/todolist"

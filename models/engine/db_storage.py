@@ -10,10 +10,13 @@ from models.location import Location
 from models.basemodel import BaseModel, Base
 from os import getenv
 import sqlalchemy
+from contextlib import contextmanager
+import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 classes = {"User": User, "Location": Location, "Todo": Todo,
         "LocationReminder": LocationReminder}
 class DBStorage:
@@ -35,6 +38,20 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
+
+    @contextmanager
+    def session_scope(self):
+        """Provides a transactional scope around a series of operations"""
+        session = self.__session()
+        try:
+            yield session
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            logger.exception("An error occurred during the transaction.")
+            raise e
+        finally:
+            session.close()
 
     def all(self, cls=None):
         """ Query on the current database session"""
@@ -74,19 +91,22 @@ class DBStorage:
     def get(self, cls, unit=None):
         """Returs the object based on it's id.
         will later need to change the id to something that can be easy to implement"""
-        if cls not in classes.values():
-            return None
-        all_cls = models.storage.all(cls)
-        if unit is None:
-            return all_cls #[cls]
-        else:
-            if cls == eval('User'):
+        try:
+            if cls not in classes.values():
+                return None
+            all_cls = models.storage.all(cls)
+            if unit is None:
+                return all_cls #[cls]
+            else:
+                if cls == eval('User'):
+                    for value in all_cls.values():
+                        if (value.username == unit):
+                            return value
                 for value in all_cls.values():
-                    if (value.username == unit):
+                    if (value.id == unit):
                         return value
-            for value in all_cls.values():
-                if (value.id == unit):
-                    return value
+        except Exception   as e:
+            self.__session.rollback()
 
     def count(self, cls=None):
         """Count the number of objects in the storage"""
@@ -101,13 +121,16 @@ class DBStorage:
             count += len(models.storage.all(cls).values())
         return count
 
+    def close(self):
+        """Closes the current database session"""
+        if self.__session is not None:
+            self.__session.close()
     def reload(self):
         """Reloads data from the database"""
+        self.close()
         Base.metadata.create_all(self.__engine)
         sessionFactory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sessionFactory)
         self.__session = Session()
 
-#    def close(self):
-#        """Closes the current database session"""
-#        self.__session.remove()
+   
