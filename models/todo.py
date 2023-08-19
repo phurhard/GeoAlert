@@ -13,16 +13,16 @@ class Todo(BaseModel, Base):
     __tablename__ = 'todos'
     id = Column(String(255), primary_key=True)
     user_name = Column(String(128), ForeignKey('users.username'))
-    location_id = Column(String(128), ForeignKey('locations.id'))
+    # location_id = Column(String(128), ForeignKey('locations.id'))
     title = Column(String(255))
     description = Column(String(255))
-    due_date = Column(DateTime, default=datetime.utcnow)
+    due_date = Column(DateTime, default=datetime.now)
     completed = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now)
 
     user = relationship('User', backref='todos')
-    location = relationship('Location', backref='todos')
+    # location = relationship('Location', backref='todos')
     def __init__(self, *args, **kwargs):
         """initializes todo"""
         super().__init__(*args, **kwargs) 

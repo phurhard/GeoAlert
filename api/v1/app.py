@@ -19,10 +19,10 @@ app.register_blueprint(app_views)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
-#@app.teardown_appcontext
-#def close_db(error):
-#    """Closesandexits the storage"""
-#    storage.close()
+@app.teardown_appcontext
+def close_db(error):
+   """Closes and exits the storage"""
+   storage.reload()
 # uncomment to test the close function of db
 
 
@@ -30,6 +30,11 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 def not_found(error):
     """Callback for 404errors"""
     return make_response(jsonify({'error': "Not Found"}), 404)
+
+@app.errorhandler(500)
+def not_found(error):
+    """Callback for 500 errors"""
+    return make_response(jsonify({'error': "Sorry there is a server error"}), 500)
 
 app.config['SWAGGER'] = {
         'title': 'GeoAlert RESTful API',

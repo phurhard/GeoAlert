@@ -52,6 +52,7 @@ class DBStorage:
             raise e
         finally:
             session.close()
+            session.exit()
 
     def all(self, cls=None):
         """ Query on the current database session"""
@@ -105,8 +106,9 @@ class DBStorage:
                 for value in all_cls.values():
                     if (value.id == unit):
                         return value
-        except Exception   as e:
-            self.__session.rollback()
+        except Exception as e:
+            self.__session.reload()
+                      
 
     def count(self, cls=None):
         """Count the number of objects in the storage"""
@@ -127,7 +129,7 @@ class DBStorage:
             self.__session.close()
     def reload(self):
         """Reloads data from the database"""
-        self.close()
+        # self.close()
         Base.metadata.create_all(self.__engine)
         sessionFactory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sessionFactory)

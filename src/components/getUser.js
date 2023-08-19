@@ -23,7 +23,8 @@ const useUser = (token) => {
         })
           .catch(error => console.log(error.message));
           
-    }, [token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     return data
 }
 

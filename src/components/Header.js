@@ -10,9 +10,10 @@ function Header() {
   const access_token = token.access_token;
   const profile = useUser(access_token);
   
+  
   useEffect(()  => {
     if (profile){
-      setUsername(profile.username);
+      setUsername(profile.username); 
     }
 
   }, [profile]);
