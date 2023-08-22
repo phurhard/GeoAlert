@@ -1,36 +1,12 @@
 import React from "react";
-import { useEffect, useState } from 'react';
-import useUser from "./getUser";
 import { Link } from "react-router-dom";
 import no_task from "../assets/images/no-task.svg";
+import useTodos from "./getTodos";
 
 function Todaytask() {
   // fetch data from the database
-  const token = JSON.parse(localStorage.getItem('token'));
-  const access_token = token.access_token;
-  const profile = useUser(access_token);
-  const [todos, setTodos] = useState(null);
-  
-  useEffect(()  => {
-    if (profile){
-      fetch(`http://localhost:5000/api/${profile.username}/todos`)
-       .then(res => {
-        // console.log(res);
-        if (!res.ok){
-          throw Error('Unable to get todos from server');
-        }
-        return res.json();
-       })
-       .then(data => {
-        setTodos(data)})
-
-       .catch(err => {console.log('Error: ',err.message)})
-    }
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile]);
-  // need to make the react only render once loaded and whenever the page chhanges or needs to be rerendered, not every time
-
+  const todos = useTodos()
+  const date = new Date();
   function dict(arg){
     if (arg === null) {return false;}
     else if (Object.values(arg).length === 0) {return false;}
@@ -43,7 +19,7 @@ function Todaytask() {
     { (() => {
       if (dict(todos)) {
     return <div className="task row ">
-      { Object.values(todos).map((todo)=> (
+      { Object.values(todos).filter(todo => todo.due_date === date).map((todo)=> (
       <div className="tasks" key={ todo.id }>
         <div className="task-title col-5">{todo.title}<span>{todo.description}</span></div>
         <div className="task-time col-3">{todo.due_date}</div>

@@ -37,6 +37,9 @@ const Hamburger = () => {
           <Link to="/locationbasedtask">Location Based Tasks</Link>
         </li>
         <li>
+          <Link to="/newtask">New Task</Link>
+        </li>
+        <li>
           <Link to="/todotask">Profile</Link>
         </li>
         <li>

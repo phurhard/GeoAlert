@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 // eslint-disable-next-line no-unused-vars
 import NewLocation from "./NewLocation";
@@ -44,7 +45,8 @@ function NewTask() {
   return (
     <>
       <div className="main add-location">
-        {/* <NewLocation /> */}
+        <Link to="/">Return to home</Link>
+        {/* will change the link and page such that after adding a new task it automatically returns to the home page */}
       </div>
       <div className="main newtask-container ">
         <h5>Add a new Task</h5>
