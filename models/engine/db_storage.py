@@ -14,11 +14,15 @@ from contextlib import contextmanager
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 classes = {"User": User, "Location": Location, "Todo": Todo,
         "LocationReminder": LocationReminder}
+
+
 class DBStorage:
     """ Interacts with the MySQL database"""
     __engine = None
@@ -26,6 +30,7 @@ class DBStorage:
 
     def __init__(self):
         """ Instantiate the database storage"""
+        '''
         USER = getenv('USER')
         PWD = getenv('PWD')
         HOST = getenv('HOST')
@@ -34,7 +39,10 @@ class DBStorage:
             self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
                 USER, PWD, HOST, DB))
         else:
-            self.__engine = create_engine('mysql+mysqldb://admin:GeoAlertAdmin@localhost/GeoAlert')
+            # uncommemt to male use of mySQL
+            # self.__engine = create_engine('mysql+mysqldb://admin:GeoAlertAdmin@localhost/GeoAlert')
+        '''
+        self.__engine = create_engine('sqlite:///:GEOALERT.db', echo=True)
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine)
         self.__session = Session()
@@ -44,10 +52,10 @@ class DBStorage:
         """Provides a transactional scope around a series of operations"""
         session = self.__session()
         try:
-            yield session
-            session.commit()
+            yield session  # send d session for work
+            session.commit()  # commit everything to database
         except Exception as e:
-            session.rollback()
+            session.rollback()  # Return to the last transaction<F11>
             logger.exception("An error occurred during the transaction.")
             raise e
         finally:
@@ -55,7 +63,9 @@ class DBStorage:
             session.exit()
 
     def all(self, cls=None):
-        """ Query on the current database session"""
+        """ Query the database for all instamces of the cls
+        if provided or if not, it'll bring all the data on the database
+        """
         new_dict = {}
         for clss in classes:
             if cls is None or cls is classes[clss] or cls is clss:
@@ -78,18 +88,20 @@ class DBStorage:
         self.__session.commit()
 
     def delete(self, obj=None):
-        """Deletes from the database if obj is not None"""
+        """Deletes an obj instance from the database if obj is not None"""
         if obj is not None:
             self.__session.delete(obj)
 
-    def removed(self, obj):
-        '''remova'''
-        objs = self.__session.query(obj).all()
+    def clear(self, obj):
+        '''Deletes all entries in database
+        should only be ysed on tasks'''
+        objs = self.__session.query(Tasks).all()
         for i in objs:
             self.__session.delete(i)
         self.__session.commit()
 
-    def get(self, cls, unit=None):
+    @staticmethod
+    def get(cls, unit=None):
         """Returs the object based on it's id.
         will later need to change the id to something that can be easy to implement"""
         try:
@@ -107,7 +119,7 @@ class DBStorage:
                     if (value.id == unit):
                         return value
         except Exception as e:
-            self.__session.reload()
+            raise ValueError
                       
 
     def count(self, cls=None):
@@ -128,11 +140,7 @@ class DBStorage:
         if self.__session is not None:
             self.__session.close()
     def reload(self):
-        """Reloads data from the database"""
-        # self.close()
-        Base.metadata.create_all(self.__engine)
-        sessionFactory = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        Session = scoped_session(sessionFactory)
-        self.__session = Session()
+        '''Reloads the database'''
+        pass
 
    

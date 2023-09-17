@@ -14,10 +14,10 @@ class Location(BaseModel, Base):
 
     id = Column(String(128), primary_key=True)
     user_name = Column(String(128), ForeignKey('users.username'))
-    name = Column(String(128), nullable=True)
-    address = Column(String(128), nullable=True)
-    latitude = Column(String(28), nullable=False, default='0')
-    longitude = Column(String(28), nullable=False, default='0')
+    name = Column(String(128))
+    address = Column(String(128))
+    latitude = Column(String(28))
+    longitude = Column(String(28))
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
