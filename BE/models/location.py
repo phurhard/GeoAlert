@@ -2,9 +2,7 @@
 """ Location """
 
 
-from datetime import datetime
-import models
-from sqlalchemy import Column, String, DateTime, ForeignKey, Integer
+from sqlalchemy import Column, String, ForeignKey
 from models.basemodel import BaseModel, Base
 from sqlalchemy.orm import relationship
 
@@ -18,11 +16,8 @@ class Location(BaseModel, Base):
     address = Column(String(128))
     latitude = Column(String(28))
     longitude = Column(String(28))
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship('User', backref='locations')
-
 
     def __init__(self, *args, **kwargs):
         """Initializes location"""

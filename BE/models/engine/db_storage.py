@@ -71,11 +71,12 @@ class DBStorage:
                     else:
                         key = obj.__class__.__name__ + '.' + obj.id
                     new_dict[key] = obj
-        return (new_dict)
+        return new_dict
 
     def new(self, obj):
         """Adds new object to the current database session"""
         self.__session.add(obj)
+        self.save()
 
     def save(self):
         """Commit all changes to the database"""
@@ -94,7 +95,6 @@ class DBStorage:
             self.__session.delete(i)
         self.__session.commit()
 
-    @staticmethod
     def get(cls, unit=None):
         """Returns the object based on it's id.
         will later need to change the id to something
@@ -133,6 +133,9 @@ class DBStorage:
         if self.__session is not None:
             self.__session.close()
 
-    def reload(self):
-        '''Reloads the database'''
-        pass
+    def search(self,  cls, **kwargs):
+        """Enables searching in the db"""
+        if type(cls) is str:
+            cls = classes.get(cls)
+        if cls is not None and cls in classes.values():
+            return self.__session.query(cls).filter_by(**kwargs).all()

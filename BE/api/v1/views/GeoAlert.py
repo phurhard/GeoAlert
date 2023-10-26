@@ -9,10 +9,11 @@ from api.v1.views import app_views
 from datetime import datetime
 from hashlib import md5
 from flask import abort, jsonify, make_response, request
-from flasgger.utils import swag_from
+# from flasgger.utils import swag_from
 from flask_jwt_extended import (
-    JWTManager, create_access_token, jwt_required, get_jwt_identity
+    create_access_token, jwt_required, get_jwt_identity
 )
+
 
 @app_views.route('/login', methods=['POST'], strict_slashes=False)
 def login():
@@ -23,9 +24,9 @@ def login():
     username = data.get('username')
     password = data.get('password')
     user = storage.get(User, username)
-    encrpyt_password =  md5(password.encode()).hexdigest()  
-    if not user or (user.password != encrpyt_password and user.password != password):
-        
+    encrpyt_password = md5(password.encode()).hexdigest()
+    if not user or (user.password != encrpyt_password
+                    and user.password != password):
         return jsonify({'error': 'Invalid username or password.'}), 401
 
     access_token = create_access_token(identity=user.username)
@@ -39,7 +40,8 @@ def profile():
     username = get_jwt_identity()
     user = storage.get(User, username)
     return jsonify(user.to_dict())
-    
+
+
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 # @swag_from('documentation/user/all_users.yml')
 def get_users():
@@ -48,11 +50,11 @@ def get_users():
     list_users = []
     for user in all_users:
         list_users.append(user.to_dict())
-    
+
     return jsonify(list_users)
 
-@app_views.route('/users/<username>', methods=['GET'], strict_slashes=False)
 
+@app_views.route('/users/<username>', methods=['GET'], strict_slashes=False)
 def get_user(username):
     """Retrieves a user based on the user name"""
     user = storage.get(User, username)
@@ -61,8 +63,8 @@ def get_user(username):
 
     return jsonify(user.to_dict())
 
-@app_views.route('/users/<username>', methods=['DELETE'], strict_slashes=False)
 
+@app_views.route('/users/<username>', methods=['DELETE'], strict_slashes=False)
 def delete_user(username):
     """Deletes a user"""
     user = storage.get(User, username)
@@ -75,7 +77,7 @@ def delete_user(username):
 
     return make_response(jsonify({}), 200)
 
-# should be used for signup
+
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
     """Creates a new user"""
@@ -91,6 +93,7 @@ def create_user():
     instance.save()
     return jsonify({'message': 'User registered successfully.'}), 201
 
+
 @app_views.route('/users/<username>', methods=['PUT'], strict_slashes=False)
 def put_user(username):
     """Updates a user"""
@@ -101,11 +104,12 @@ def put_user(username):
         abort(400, description="Not a JSON")
     ignore = ['username', 'created_at', 'updated_at', 'id']
     data = request.get_json()
-    for k,v in data.items():
+    for k, v in data.items():
         if k not in ignore:
             setattr(user, k, v)
     storage.save()
     return make_response(jsonify(user.to_dict()), 200)
+
 
 @app_views.route('/<username>/todos', methods=["GET"], strict_slashes=False)
 def get_Todos(username):
@@ -117,11 +121,9 @@ def get_Todos(username):
         abort(404)
     for todo in user.todos:
         Todo[k] = todo.to_dict()
-        
         k += 1
     return jsonify(Todo)
 
-''' To get the todos with a specific boolean, edit it with frontend'''
 
 @app_views.route('/<username>/todo', methods=["POST"], strict_slashes=False)
 def create_todo(username):
@@ -140,20 +142,22 @@ def create_todo(username):
     todo.save()
     return jsonify(todo.to_dict())
 
+
 @app_views.route('/<username>/<todoId>', methods=['GET'], strict_slashes=False)
 def deleteTodo(username, todoId):
     """This method deletes a todo based on it's ID"""
     user = storage.get(User, username)
     todos = user.todos
     for todo in todos:
-        
         if todo.to_dict()['id'] == todoId:
             print(todo)
             todo.delete()
     user.save()
     return jsonify({})
 
-@app_views.route('/<username>/todos/<todoId>', methods=['PUT'], strict_slashes=False)
+
+@app_views.route('/<username>/todos/<todoId>',
+                 methods=['PUT'], strict_slashes=False)
 def updateTodo(username,  todoId):
     """Updates the todo with given parameters"""
     user = storage.get(User, username)
@@ -164,7 +168,7 @@ def updateTodo(username,  todoId):
             data = request.get_json()
             if not data:
                 return jsonify({"Error": "Not a JSON"})
-            for k,v in data.items():
+            for k, v in data.items():
                 if k not in ignore:
                     setattr(todo, k, v)
             todo.to_dict()['updated_at'] = datetime.now()
@@ -172,6 +176,8 @@ def updateTodo(username,  todoId):
     return jsonify(todo.to_dict())
 
 # Location
+
+
 @app_views.route('/locations', strict_slashes=False)
 def get_Locations():
     """Gets all the location data. will edit
@@ -180,36 +186,41 @@ def get_Locations():
     dictLocation = {}
     for k, v in data.items():
         dictLocation[k] = v.to_dict()
-    
     return jsonify({"contentts": dictLocation})
-@app_views.route('/<username>/location', methods=['POST'], strict_slashes=False)
+
+
+@app_views.route('/<username>/location',
+                 methods=['POST'], strict_slashes=False)
 def create_L(username):
     """Creates a location class for a user """
-    user = storage.get(User, username)
+    # user = storage.get(User, username)
     data = request.get_json()
     data['user_name'] = username
     location = Location(**data)
     location.save()
     return jsonify(location.to_dict())
 
+
 @app_views.route('/<username>/location/<locationId>', strict_slashes=False)
 def get_L(username, locationId):
     """Gets a location based on it id"""
     user = storage.get(User, username)
-    
     locations = user.locations
     for location in locations:
         if location.to_dict()['id'] == locationId:
             return jsonify(location.to_dict())
-    #return jsonify({"Error": "There is no Location data for this user"})
-@app_views.route('/<username>/location/<locationId>', methods=['PUT'], strict_slashes=False)
+    # return jsonify({"Error": "There is no Location data for this user"})
+
+
+@app_views.route('/<username>/location/<locationId>',
+                 methods=['PUT'], strict_slashes=False)
 def update_L(username, locationId):
     """Updates location detail"""
     user = storage.get(User, username)
     locations = user.locations
     for location in locations:
         if location.to_dict()['id'] == locationId:
-            #print(location.to_dict())
+            # print(location.to_dict())
             data = request.get_json()
             for k, v in data.items():
                 setattr(location, k, v)
@@ -217,7 +228,9 @@ def update_L(username, locationId):
             user.save()
             return jsonify(location.to_dict())
 
-@app_views.route('/<username>/location/<locationId>', methods=['DELETE'], strict_slashes=False)
+
+@app_views.route('/<username>/location/<locationId>',
+                 methods=['DELETE'], strict_slashes=False)
 def delete_L(username, locationId):
     """Deletes a location resource"""
     user = storage.get(User, username)
@@ -229,23 +242,26 @@ def delete_L(username, locationId):
     return jsonify({})
 
 # Location Reminder Endpoints
-@app_views.route('/<username>/<todoId>/<locationId>/locationReminder', methods=['POST'], strict_slashes=False)
-def create_LR(username, locationId, todoId):
+
+
+@app_views.route('/locationReminder',
+                 methods=['POST'], strict_slashes=False)
+def create_LR():
     """Creates a location based task reminder """
-    
     data = request.get_json()
     if not data:
         return jsonify({"Error": "Not a valid JSON"})
-    
-    data['user_name'] = username
-    data['todo_id'] = todoId
-    data['location_id'] = locationId
+    # data['user_name'] = username
+    # data['todo_id'] = todoId
+    # data['location_id'] = locationId
 
     locaRemind = LocationReminder(**data)
     locaRemind.save()
     return jsonify(locaRemind.to_dict())
 
-@app_views.route('/<username>/<locationReminderId>', methods=['DELETE'], strict_slashes=False)
+
+@app_views.route('/<username>/<locationReminderId>',
+                 methods=['DELETE'], strict_slashes=False)
 def delete_LR(username, locationReminderId):
     """Removes a location reminder from the storage"""
     user = storage.get(User, username)
@@ -256,8 +272,10 @@ def delete_LR(username, locationReminderId):
             user.save()
             return jsonify({"Success": "Location Reminder deleted"})
     return jsonify({"Error": "Location Reminder could not be found"})
-    
-@app_views.route('/<username>/<locationReminderId>', methods=["PUT"], strict_slashes=False)
+
+
+@app_views.route('/<username>/<locationReminderId>',
+                 methods=["PUT"], strict_slashes=False)
 def update_LR(username, locationReminderId):
     """Updates the location reminder"""
     ignore = ['updated_at', 'created_at', 'user_name', 'id']
@@ -273,6 +291,7 @@ def update_LR(username, locationReminderId):
                     setattr(locationRemind, k, v)
             locationRemind['updated_at'] = datetime.utcnow()
         return jsonify(locationRemind.to_dict)
+
 
 @app_views.route('/admin', strict_slashes=False)
 def all():

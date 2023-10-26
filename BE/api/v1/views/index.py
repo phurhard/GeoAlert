@@ -14,6 +14,7 @@ def status():
     """Returns the status of the flask app"""
     return jsonify({"status": "GeoAlert is running OK"})
 
+
 @app_views.route('/stats', strict_slashes=False)
 def stats():
     """Retrieve the no of each objects in storage"""

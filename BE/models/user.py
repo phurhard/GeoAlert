@@ -2,11 +2,8 @@
 """ The user class"""
 
 
-from datetime import datetime
-import models
 from models.basemodel import BaseModel, Base
-from sqlalchemy import Column, String, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String
 from sqlalchemy.schema import UniqueConstraint
 # from hashlib import md5
 import bcrypt
@@ -20,8 +17,6 @@ class User(BaseModel, Base):
     lastname = Column(String(128), nullable=True)
     email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
 
     __table_args__ = (
             UniqueConstraint('username', name='uq_username'),
@@ -36,7 +31,6 @@ class User(BaseModel, Base):
         if name == "password":
             salt = bcrypt.gensalt()
             pwd = value.encode('utf-8')
-            # md5(value.encode()).hexdigest()
             value = bcrypt.hashpw(pwd, salt)
 
         super().__setattr__(name, value)
