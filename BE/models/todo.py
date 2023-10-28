@@ -3,8 +3,8 @@
 
 
 from datetime import datetime
-import models
-from models.basemodel import BaseModel, Base
+# from BE import models
+from BE.models.basemodel import BaseModel, Base
 from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 

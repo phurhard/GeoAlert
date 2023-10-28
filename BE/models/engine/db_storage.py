@@ -2,18 +2,16 @@
 """ MySQL database storage"""
 
 
-import models
-from models.user import User
-from models.locationreminder import LocationReminder
-from models.todo import Todo
-from models.location import Location
-from models.basemodel import Base
+# from BE.models import storage
+from BE.models.user import User
+from BE.models.locationreminder import LocationReminder
+from BE.models.todo import Todo
+from BE.models.location import Location
+from BE.models.basemodel import Base
 # from os import getenv
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-# from sqlalchemy.orm.exc import NoResultFound
-# from sqlalchemy.exc import InvalidRequestError
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -67,9 +65,9 @@ class DBStorage:
 
                 for obj in objs:
                     if obj.__class__.__name__ == 'User':
-                        key = obj.__class__.__name__ + '.' + obj.username
+                        key = f"{obj.__class__.__name__ }.{obj.username}"
                     else:
-                        key = obj.__class__.__name__ + '.' + obj.id
+                        key = f"{obj.__class__.__name__}.{obj.id}"
                     new_dict[key] = obj
         return new_dict
 
@@ -80,7 +78,12 @@ class DBStorage:
 
     def save(self):
         """Commit all changes to the database"""
-        self.__session.commit()
+        try:
+            self.__session.commit()
+        except Exception as e:
+            self.__session.rollback()
+            print(e)
+            # raise Exception from e
 
     def delete(self, obj=None):
         """Deletes an obj instance from the database if obj is not None"""
@@ -95,24 +98,23 @@ class DBStorage:
             self.__session.delete(i)
         self.__session.commit()
 
-    def get(cls, unit=None):
+    def get(self, cls, unit=None):
         """Returns the object based on it's id.
         will later need to change the id to something
         that can be easy to implement"""
         try:
             if cls not in classes.values():
                 return None
-            all_cls = models.storage.all(cls)
+            all_cls = self.all(cls)
             if unit is None:
                 return all_cls  # [cls]
-            else:
-                if cls == eval('User'):
-                    for value in all_cls.values():
-                        if (value.username == unit):
-                            return value
+            if cls == eval('User'):
                 for value in all_cls.values():
-                    if (value.id == unit):
+                    if (value.username == unit):
                         return value
+            for value in all_cls.values():
+                if (value.id == unit):
+                    return value
         except ValueError:
             raise ValueError
 
@@ -123,9 +125,9 @@ class DBStorage:
 
         if not cls:
             for clss in all_classes:
-                count += len(models.storage.all(clss).values())
+                count += len(self.all(clss).values())
         else:
-            count += len(models.storage.all(cls).values())
+            count += len(self.all(cls).values())
         return count
 
     def close(self):

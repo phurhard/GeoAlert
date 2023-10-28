@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """Index"""
-from models.user import User
-from models.todo import Todo
-from models.location import Location
-from models.locationreminder import LocationReminder
-from models import storage
-from api.v1.views import app_views
+from BE.models.user import User
+from BE.models.todo import Todo
+from BE.models.location import Location
+from BE.models.locationreminder import LocationReminder
+from BE.models import storage
+from BE import app_views
 from flask import jsonify
 
 

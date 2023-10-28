@@ -2,7 +2,7 @@
 """ The user class"""
 
 
-from models.basemodel import BaseModel, Base
+from BE.models.basemodel import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.schema import UniqueConstraint
 # from hashlib import md5

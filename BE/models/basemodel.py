@@ -2,8 +2,8 @@
 """ BaseModel on which all others will be built on"""
 
 
-from datetime import datetime, date, time
-import models
+from datetime import datetime, date, time, timezone
+from BE import models
 from sqlalchemy import Column, String, TIMESTAMP
 from sqlalchemy.ext.declarative import declarative_base
 from uuid import uuid4
@@ -28,16 +28,17 @@ class BaseModel:
             if kwargs.get("created_at", None) and type(self.created_at) is str:
                 self.created_at = datetime.strptime(kwargs["created_at"], time)
             else:
-                self.created_at = datetime.utcnow()
+                self.created_at = datetime.now(timezone.utc)
             if kwargs.get("updated_at", None) and type(self.updated_at) is str:
                 self.updated_at = datetime.strptime(kwargs["updated_at"], time)
             else:
-                self.updated_at = datetime.utcnow()
+                self.updated_at = datetime.now(timezone.utc)
             if kwargs.get("id", None) is None:
                 self.id = str(uuid4())
+            models.storage.new(self)
         else:
             self.id = str(uuid4())
-            self.created_at = datetime.utcnow()
+            self.created_at = datetime.now(timezone.utc)
             self.updated_at = self.created_at
 
     def __str__(self):
@@ -51,7 +52,7 @@ class BaseModel:
 
     def save(self):
         """ updates the attr updated_at with the current datetime"""
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
         models.storage.save()
 
     def to_dict(self):
@@ -59,9 +60,9 @@ class BaseModel:
         keys and values of the instance"""
         new_dict = self.__dict__.copy()
         if "created_at" in new_dict:
-            new_dict["created_at"] = new_dict["created_at"].strftime(time)
+            new_dict["created_at"] = new_dict["created_at"].strftime(Time)
         if "updated_at" in new_dict:
-            new_dict["updated_at"] = new_dict["updated_at"].strftime(time)
+            new_dict["updated_at"] = new_dict["updated_at"].strftime(Time)
         new_dict["__class__"] = self.__class__.__name__
 
         if "_sa_instance_state" in new_dict:
@@ -86,4 +87,4 @@ class BaseModel:
             if (key == 'created_at') or (key == 'updated_at'):
                 continue
             setattr(self, key, value)
-            self.updated_at = datetime.utcnow()
+            self.updated_at = datetime.now(timezone.utc)

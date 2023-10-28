@@ -1,18 +1,95 @@
 #!/usr/bin/python3
 """ Objects that will handle all default RESTful API for GeoAlert"""
-from models.user import User
-from models.todo import Todo
-from models.location import Location
-from models import storage
-from models.locationreminder import LocationReminder
-from api.v1.views import app_views
+from BE.models.user import User
+from BE.models.todo import Todo
+from BE.models.location import Location
+from BE.models import storage
+from BE.models.locationreminder import LocationReminder
+# from BE.api.v1.views import app_views
 from datetime import datetime
 from hashlib import md5
+import BE
+from BE import api_rest, app_views
+from flask_restx import Resource, fields, Namespace
 from flask import abort, jsonify, make_response, request
-# from flasgger.utils import swag_from
 from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity
 )
+
+
+# Namespace creation for user, todo, location and locationreminder
+user = api_rest.namespace(
+    'User',
+    description="Users login and authentication for the app"
+    )
+todo = BE.api_rest.namespace(
+    'Todo',
+    description="Tasks operations"
+    )
+location = BE.api_rest.namespace(
+    'Location',
+    description="Location based operations"
+)
+locationReminder = BE.api_rest.namespace(
+    'LocationReminder',
+    description="Associating todos with their respective locations"
+)
+
+# Models for serialization
+user_model = BE.api_rest.model(
+    'User',
+    {
+        'username': fields.String(
+            required=True,
+            description='A chosen username to identify the user with'
+            ),
+        'firstname': fields.String(
+            required=True,
+            description='A firstname to identify the user with'
+            ),
+        'lastname': fields.String(
+            required=True,
+            description='Lastname of user'
+            ),
+        'email': fields.String(
+            required=True,
+            description='A genuine email address'
+            )
+    }
+)
+
+
+@user.route('/')
+class UserView(Resource):
+    """Basic authentication operations necessary for a user"""
+    @user.doc('signup')
+    @user.marshal_with(user_model, 200)
+    def get(self):
+        return 'Hello'
+
+    @user.doc('sign')
+    @user.expect(user_model)
+    @user.marshal_with(user_model, code=201)
+    def post(self):
+        """Signup creates a new user"""
+        if not request.get_json():
+            abort(400, description="Error, not valid")
+        if 'email' not in request.get_json():
+            abort(400, description="Email is missing")
+        if 'password' not in request.get_json():
+            abort(400, description="Missing password")
+
+        data = request.get_json()
+        user = User(**data)
+        # Work on integrity errors.
+        user.save()
+        # find a way to edit response of marshal with
+        return jsonify({
+            'status': 201,
+            'success': True,
+            'firstname': 'User registered successfully',
+            'data': user.to_dict()
+            }), 201
 
 
 @app_views.route('/login', methods=['POST'], strict_slashes=False)
