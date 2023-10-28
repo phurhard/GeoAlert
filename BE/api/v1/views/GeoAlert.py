@@ -58,6 +58,78 @@ user_model = BE.api_rest.model(
     }
 )
 
+todo_model = BE.api_rest.model(
+    'Todo',
+    {
+        'username': fields.String(
+            required=True,
+            description='A chosen username to identify the user with'
+            ),
+        'firstname': fields.String(
+            required=True,
+            description='A firstname to identify the user with'
+            ),
+        'lastname': fields.String(
+            required=True,
+            description='Lastname of user'
+            ),
+        'email': fields.String(
+            required=True,
+            description='A genuine email address'
+            )
+    }
+)
+
+location_model = BE.api_rest.model(
+    'Location',
+    {
+        'user_name': fields.String(
+            required=True,
+            description='A chosen username to identify the user with'
+            ),
+        'name': fields.String(
+            required=True,
+            description='A firstname to identify the user with'
+            ),
+        'address': fields.String(
+            required=True,
+            description='Lastname of user'
+            ),
+        'longitude': fields.String(
+            required=True,
+            description='A genuine email address'
+            ),
+        'latitude': fields.String(
+            required=True,
+            description='A genuine email address'
+            )
+    }
+)
+
+locationReminder_model = BE.api_rest.model(
+    'LocationReminder',
+    {
+        'user_name': fields.String(
+            required=True,
+            description='The user who has the task'
+            ),
+        'location_id': fields.String(
+            required=True,
+            description='The id of the chosen location'
+            ),
+        'todo_id': fields.String(
+            required=True,
+            description='the task id'
+            ),
+        'accuracy': fields.String(
+            description='The acccuracy of the Reminder'
+            ),
+        'activated': fields.String(
+            description='Has the tasks been done?'
+            )
+    }
+)
+
 
 @user.route('/')
 class UserView(Resource):
