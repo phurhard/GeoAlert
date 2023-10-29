@@ -174,8 +174,7 @@ def login():
     password = data.get('password')
     user = storage.get(User, username)
     encrpyt_password = md5(password.encode()).hexdigest()
-    if not user or (user.password != encrpyt_password
-                    and user.password != password):
+    if not user or user.password not in [encrpyt_password, password]:
         return jsonify({'error': 'Invalid username or password.'}), 401
 
     access_token = create_access_token(identity=user.username)
@@ -192,14 +191,10 @@ def profile():
 
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
-# @swag_from('documentation/user/all_users.yml')
 def get_users():
     """Retrieves a list of all users"""
     all_users = storage.all(User).values()
-    list_users = []
-    for user in all_users:
-        list_users.append(user.to_dict())
-
+    list_users = [user.to_dict() for user in all_users]
     return jsonify(list_users)
 
 
@@ -264,13 +259,9 @@ def put_user(username):
 def get_Todos(username):
     """Gets all todos relates to a user"""
     user = storage.get(User, username)
-    k = 1
-    Todo = {}
     if not user:
         abort(404)
-    for todo in user.todos:
-        Todo[k] = todo.to_dict()
-        k += 1
+    Todo = {k: todo.to_dict() for k, todo in enumerate(user.todos, start=1)}
     return jsonify(Todo)
 
 
@@ -283,10 +274,7 @@ def create_todo(username):
     data['user_name'] = username
     if "completed" in data:
         value = data['completed']
-        if value == "False":
-            data['completed'] = bool("False")
-        else:
-            data['completed'] = bool("True")
+        data['completed'] = bool("False") if value == "False" else bool("True")
     todo = Todo(**data)
     todo.save()
     return jsonify(todo.to_dict())
@@ -332,9 +320,7 @@ def get_Locations():
     """Gets all the location data. will edit
     it to get only location based on a user"""
     data = storage.all(Location)
-    dictLocation = {}
-    for k, v in data.items():
-        dictLocation[k] = v.to_dict()
+    dictLocation = {k: v.to_dict() for k, v in data.items()}
     return jsonify({"contentts": dictLocation})
 
 
@@ -446,7 +432,5 @@ def update_LR(username, locationReminderId):
 def all():
     '''shows all entries in the database'''
     database = storage.all()
-    data = {}
-    for k, v in database.items():
-        data[k] = v.to_dict()
+    data = {k: v.to_dict() for k, v in database.items()}
     return jsonify(data)

@@ -21,7 +21,5 @@ def stats():
     classes = [User, Todo, Location, LocationReminder]
     names = ["users", "todos", "locations", "locationReminders"]
 
-    objs = {}
-    for i in range(len(classes)):
-        objs[names[i]] = storage.count(classes[i])
+    objs = {names[i]: storage.count(classes[i]) for i in range(len(classes))}
     return jsonify(objs)
