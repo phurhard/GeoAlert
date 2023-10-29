@@ -29,7 +29,7 @@ class GeoAlert(cmd.Cmd):
             print('Allowed classes are \n\tUser\
                     \n\tLocation\n\tTodo\n\tLocationReminder')
             return False
-        elif not (args[0] in self.classes):
+        elif args[0] not in self.classes:
             print("Class doesn't exist")
             print(f"Allowed classes are \n\tUser\
                     \n\tLocation\n\tTodo\n\tLocationReminder")
@@ -40,11 +40,10 @@ class GeoAlert(cmd.Cmd):
             try:
                 if objs:
                     for obj in objs:
-                        if new_dict['username'] in obj:
-                            print('User already exists')
-                            return False
-                        else:
+                        if new_dict['username'] not in obj:
                             continue
+                        print('User already exists')
+                        return False
             except Exception as e:
                 pass
             new_instance = self.classes[args[0]](**new_dict)
@@ -63,7 +62,7 @@ class GeoAlert(cmd.Cmd):
             return False
         if args[0] in self.classes:
             if len(args) > 1:
-                key = args[0] + "." + args[1]
+                key = f"{args[0]}.{args[1]}"
                 if key in models.storage.all():
                     print(models.storage.all()[key])
                     print(models.storage.all()[key].__dir__())
@@ -87,7 +86,7 @@ class GeoAlert(cmd.Cmd):
             print('class name missing')
         elif args[0] in self.classes:
             if len(args) > 1:
-                key = args[0] + "." + args[1]
+                key = f"{args[0]}.{args[1]}"
                 if key in models.storage.all():
                     models.storage.delete(key)
                     models.storage.save()
@@ -110,12 +109,12 @@ class GeoAlert(cmd.Cmd):
             print("** class name missing **")
         elif args[0] in self.classes:
             if len(args) > 1:
-                k = args[0] + "." + args[1]
+                k = f"{args[0]}.{args[1]}"
                 if k in models.storage.all():
                     if len(args) > 2:
                         if len(args) > 3:
                             print(models.storage.all()[k].__dir__())
-                            
+
                             if args[0] == "Todo":
                                 if args[2] in strings:
                                     try:
@@ -190,7 +189,6 @@ class GeoAlert(cmd.Cmd):
     def do_all(self, arg):
         """Returns all the datas in database"""
         args = shlex.split(arg)
-        obj_list = []
         if len(arg) == 0:
             obj_dict = models.storage.all()
         elif args[0] in self.classes:
@@ -198,8 +196,7 @@ class GeoAlert(cmd.Cmd):
         else:
             print('class doesnt exist')
             return False
-        for k in obj_dict:
-            obj_list.append(str(obj_dict[k]))
+        obj_list = [str(obj_dict[k]) for k in obj_dict]
         print("[", end="")
         print(", ".join(obj_list), end="")
         print("]")

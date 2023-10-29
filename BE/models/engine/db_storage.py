@@ -67,9 +67,9 @@ class DBStorage:
 
                 for obj in objs:
                     if obj.__class__.__name__ == 'User':
-                        key = obj.__class__.__name__ + '.' + obj.username
+                        key = f'{obj.__class__.__name__}.{obj.username}'
                     else:
-                        key = obj.__class__.__name__ + '.' + obj.id
+                        key = f'{obj.__class__.__name__}.{obj.id}'
                     new_dict[key] = obj
         return (new_dict)
 
@@ -105,14 +105,13 @@ class DBStorage:
             all_cls = models.storage.all(cls)
             if unit is None:
                 return all_cls  # [cls]
-            else:
-                if cls == eval('User'):
-                    for value in all_cls.values():
-                        if (value.username == unit):
-                            return value
+            if cls == eval('User'):
                 for value in all_cls.values():
-                    if (value.id == unit):
+                    if (value.username == unit):
                         return value
+            for value in all_cls.values():
+                if (value.id == unit):
+                    return value
         except ValueError:
             raise ValueError
 
