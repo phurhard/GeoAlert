@@ -2,10 +2,8 @@
 """ Location Reminder class"""
 
 
-from datetime import datetime
-import models
-from models.basemodel import BaseModel, Base
-from sqlalchemy import Column, String, DateTime, ForeignKey, Boolean, Integer
+from BE.models.basemodel import BaseModel, Base
+from sqlalchemy import Column, String, ForeignKey, Boolean, Integer
 from sqlalchemy.orm import relationship
 
 
@@ -19,9 +17,6 @@ class LocationReminder(BaseModel, Base):
     todo_id = Column(String(128), ForeignKey('todos.id'))
     accuracy = Column(Integer, default=0)
     activated = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at =Column(DateTime, default=datetime.utcnow)
-
     user = relationship('User', backref='locationReminder')
     location = relationship('Location', backref='locationReminder')
     todo = relationship('Todo', backref='locationReminder')
