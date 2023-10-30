@@ -1,2 +1,0 @@
-#!/bin/bash
-USER=admin PWD=GeoAlertAdmin HOST=localhost DB=GeoAlert python3 -m api.v1.app
