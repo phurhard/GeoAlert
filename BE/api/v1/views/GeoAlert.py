@@ -195,7 +195,7 @@ class UserActivity(Resource):
 
         return make_response(jsonify({}), 200)
 
-    @user.doc('Update a user infomation')
+    @user.doc('Update a user information')
     def put(self, username):
         '''Updates a user'''
         user = storage.get(User, username)
