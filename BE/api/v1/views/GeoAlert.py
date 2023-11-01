@@ -182,7 +182,7 @@ class UserView(Resource):
         """Returns all users in the db
         This is just for testing, removed later"""
         all_users = storage.all(User).values()
-        list_users = [user.to_dict() for user in users]
+        list_users = [user.to_dict() for user in all_users]
         
         return {
             'status': 200,
@@ -204,7 +204,6 @@ class UserView(Resource):
 
         try:
             data = request.get_json()
-            # args = parser.parse_args()
             username = data['username']
             user = storage.get(User, username)
             if user:
@@ -234,8 +233,10 @@ class UserView(Resource):
 @user.route('/<string:username>')
 @user.param('username', 'Username of the user')
 class UserActivity(Resource):
+    '''Make use of flask login and flask user'''
     @user.doc('Get user Profile')
     def get(self, username):
+        '''Returns the profile details of the user'''
         # username = get_jwt_identity()
         
         user = storage.get(User, username)
@@ -296,29 +297,32 @@ class UserActivity(Resource):
 
 @todo.route('/')
 class TodoView(Resource):
-    '''Basic authentication operations necessary for a user'''
+    '''Users tasks activities'''
     @todo.doc('Admin: get all todos')
     @todo.marshal_with(todo_model, 200)
     def get(self):
         '''Get all todo in the db'''
-        tasks = storage.all(Todo)
+        all_tasks = storage.all(Todo).values()
+        tasks = [task.to_dict() for task in all_tasks]
         print(tasks)
-        return 'Hello'
+        return tasks, 200
 
     @todo.doc('Create a new todo')
+    @todo.expect(todo_model, validate=True)
     def post(self):
         '''Creates a new todo for a user
         username will be sent as part of payload'''
         data = request.get_json()
         if not data:
             print('Not a valid JSON')
-        try:
-            username = data['user_name']
-            user = storage.get(User, username)
-        except Exception as e:
-            print(e)
-            return "No user found for with that username"
-
+        username = data['username']
+        user = storage.get(User, username)
+        if not user:
+            return {
+                'status': 404,
+                'success': False,
+                'message': 'No user found'
+            }, 404
         if "completed" in data:
             value = data['completed']
             if value == "False":
@@ -326,56 +330,86 @@ class TodoView(Resource):
             else:
                 data['completed'] = bool("True")
         todo = Todo(**data)
-        todo.save()
-        return jsonify(todo.to_dict())
+        return {
+            'status': 201,
+            'success': True,
+            'message': 'A new task has been created',
+            'data': todo.to_dict()
+        }, 201
 
 
 @todo.route('/<string:id>')
-@todo.param('username', 'The name of the user')
+@todo.param('id', 'task id')
 class TodoTasks(Resource):
-
+    '''Tasks'''
+    
     @todo.doc('Get a single todo')
     def get(self, id):
         '''Gets all todos relates to a user'''
-        user = storage.get(User, username)
-        k = 1
-        Todo = {}
-        if not user:
-            abort(404)
-        for todo in user.todos:
-            Todo[k] = todo.to_dict()
-            k += 1
-        return jsonify(Todo)
+        # k = 1
+        # Todo = {}
+        # if not user:
+        #     abort(404)
+        # for todo in user.todos:
+        #     Todo[k] = todo.to_dict()
+        #     k += 1
+        # return jsonify(Todo)
+        if task := storage.get(Todo, id):
+            return {
+                'status': 200,
+                'success': True,
+                'message': 'Requested task found',
+                'data': task.to_dict()
+            }, 200
+        else:
+            return {
+                'status': 404,
+                'success': False,
+                'message': 'requested task not found'
+            }, 404
 
     @todo.doc('Delete a todo')
     def delete(self, id):
         '''This method deletes a todo based on it's ID'''
-        user = storage.get(User, username)
-        todos = user.todos
-        for todo in todos:
-            if todo.to_dict()['id'] == todoId:
-                print(todo)
-                todo.delete()
-        user.save()
-        return jsonify({})
+        if task := storage.get(Todo, id):
+            storage.delete(task)
+            return {
+                'status': 204,
+                'success': True,
+                'message': 'Requested task has been deleted succefully'
+            }, 204
+        return {
+            'status': 404,
+            'success': False,
+            'message': 'Requested task not found'
+        }, 404
 
     @todo.doc('Update a todo')
     def put(self, id):
         '''Updates the todo with given parameters'''
-        user = storage.get(User, username)
+        task = storage.get(Todo, id)
         ignore = ['user_name', 'id', '__class__', 'created_at', 'updated_at']
-        todos = user.todos
-        for todo in todos:
-            if todo.to_dict()['id'] == todoId:
-                data = request.get_json()
-                if not data:
-                    return jsonify({"Error": "Not a JSON"})
-                for k, v in data.items():
-                    if k not in ignore:
-                        setattr(todo, k, v)
-                todo.to_dict()['updated_at'] = datetime.now()
-        user.save()
-        return jsonify(todo.to_dict())
+        if not task:
+            return {
+                'status': 404,
+                'success': False,
+                'message': 'Requested task not found'
+                }, 404
+        
+        data = request.get_json()
+        if not data:
+            return {"Error": "Not a JSON"}, 400
+        for k, v in data.items():
+            if k not in ignore:
+                setattr(todo, k, v)
+        todo.to_dict()['updated_at'] = datetime.now()
+        todo.save()
+        return {
+            'status': 200,
+            'success': True,
+            'message': 'Requested task updated successfully',
+            'data': todo.to_dict()
+            }, 200
 
 
 @location.route('/location')
