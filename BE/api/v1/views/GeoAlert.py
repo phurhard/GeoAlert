@@ -104,7 +104,7 @@ todo_model = BE.api_rest.model(
             required=True,
             description='Lastname of user'
             ),
-        'due_date': fields.String(
+        'due_date': fields.DateTime(
             required=True,
             description='A genuine email address'
             ),
@@ -312,7 +312,7 @@ class TodoView(Resource):
         data = request.get_json()
         if not data:
             print('Not a valid JSON')
-        username = data['username']
+        username = data['user_name']
         user = storage.get(User, username)
         if not user:
             return {
@@ -323,7 +323,13 @@ class TodoView(Resource):
         if "completed" in data:
             value = data['completed']
             data['completed'] = bool("False") if value == "False" else bool("True")
+
+        if 'due_date' in data.keys():
+            dateStr = data['due_date']
+            data['duedate'] = datetime.fromisoformat(dateStr)
         todo = Todo(**data)
+        tasks = todo.to_dict()
+        tasks['due_date'] = tasks['due_date'].strftime('%c')
         return {
             'status': 201,
             'success': True,
