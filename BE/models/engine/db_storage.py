@@ -9,6 +9,7 @@ from BE.models.todo import Todo
 from BE.models.location import Location
 from BE.models.basemodel import Base
 # from os import getenv
+from sqlalchemy.exc import IntegrityError
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -83,7 +84,6 @@ class DBStorage:
         except Exception as e:
             self.__session.rollback()
             print(e)
-            # raise Exception from e
 
     def delete(self, obj=None):
         """Deletes an obj instance from the database if obj is not None"""
