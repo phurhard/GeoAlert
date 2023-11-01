@@ -237,10 +237,7 @@ class UserActivity(Resource):
     @user.doc('Get user Profile')
     def get(self, username):
         '''Returns the profile details of the user'''
-        # username = get_jwt_identity()
-        
-        user = storage.get(User, username)
-        if user:
+        if user := storage.get(User, username):
             return {
                 'status': 200,
                 'success': True,
@@ -325,10 +322,7 @@ class TodoView(Resource):
             }, 404
         if "completed" in data:
             value = data['completed']
-            if value == "False":
-                data['completed'] = bool("False")
-            else:
-                data['completed'] = bool("True")
+            data['completed'] = bool("False") if value == "False" else bool("True")
         todo = Todo(**data)
         return {
             'status': 201,
@@ -421,31 +415,29 @@ class LocationView(Resource):
         '''Gets all the location data. will edit
         it to get only location based on a user'''
         data = storage.all(Location)
-        dictLocation = {}
-        for k, v in data.items():
-            dictLocation[k] = v.to_dict()
+        dictLocation = {k: v.to_dict() for k, v in data.items()}
         return jsonify({"contents": dictLocation})
 
-    def create_L(username):
+    def create_L(self):
         '''Creates a location class for a user '''
         # user = storage.get(User, username)
         data = request.get_json()
-        data['user_name'] = username
+        data['user_name'] = self
         location = Location(**data)
         location.save()
         return jsonify(location.to_dict())
 
-    def get_L(username, locationId):
+    def get_L(self, locationId):
         '''Gets a location based on it id'''
         location = storage.get(Location, locationId)
         return jsonify(location.to_dict())
         # return jsonify({"Error": "There is no Location data for this user"})
 
-    def update_L(username, locationId):
+    def update_L(self, locationId):
         '''Updates location detail'''
-        user = storage.get(User, username)
+        user = storage.get(User, self)
         location = storage.get(Location, locationId)
-        if username == location.user_name:
+        if self == location.user_name:
             data = request.get_json()
             for k, v in data.items():
                 setattr(location, k, v)
@@ -453,9 +445,9 @@ class LocationView(Resource):
         user.save()
         return jsonify(location.to_dict())
 
-    def delete_L(username, locationId):
+    def delete_L(self, locationId):
         '''Deletes a location resource'''
-        user = storage.get(User, username)
+        user = storage.get(User, self)
         locations = user.locations
         for location in locations:
             if location.to_dict()['id'] == locationId:
@@ -480,9 +472,9 @@ class LocationReminderView(Resource):
         locaRemind.save()
         return jsonify(locaRemind.to_dict())
 
-    def delete_LR(username, locationReminderId):
+    def delete_LR(self, locationReminderId):
         '''Removes a location reminder from the storage'''
-        user = storage.get(User, username)
+        user = storage.get(User, self)
         locoRemind = user.locationReminder
         for lr in locoRemind:
             if lr.to_dict()['id'] == locationReminderId:
@@ -491,10 +483,10 @@ class LocationReminderView(Resource):
                 return jsonify({"Success": "Location Reminder deleted"})
         return jsonify({"Error": "Location Reminder could not be found"})
 
-    def update_LR(username, locationReminderId):
+    def update_LR(self, locationReminderId):
         '''Updates the location reminder'''
         ignore = ['updated_at', 'created_at', 'user_name', 'id']
-        user = storage.get(User, username)
+        user = storage.get(User, self)
         locationReminders = user.loctionReminder
         for locationRemind in locationReminders:
             if locationRemind.to_dict()['id'] == locationReminderId:
@@ -796,7 +788,5 @@ def update_LR(username, locationReminderId):
 def all():
     '''shows all entries in the database'''
     database = storage.all()
-    data = {}
-    for k, v in database.items():
-        data[k] = v.to_dict()
+    data = {k: v.to_dict() for k, v in database.items()}
     return jsonify(data)
