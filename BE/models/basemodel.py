@@ -67,9 +67,13 @@ class BaseModel:
 
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
+            
+        if "__class__" in new_dict:
+            del new_dict["__class__"]
 
         if "password" in new_dict:
             new_dict["password"] = str(new_dict["password"])
+            # hide the password from showing
 
         return new_dict
 

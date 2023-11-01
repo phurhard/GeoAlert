@@ -5,22 +5,23 @@ from BE.models.todo import Todo
 from BE.models.location import Location
 from BE.models import storage
 from BE.models.locationreminder import LocationReminder
-# from BE.api.v1.views import app_views
 from datetime import datetime
 from hashlib import md5
 import BE
 from BE import api_rest, app_views
-from flask_restx import Resource, fields, Namespace
+from flask_restx import Resource, fields, Namespace, reqparse, inputs
 from flask import abort, jsonify, make_response, request
 from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity
 )
+from sqlalchemy.exc import IntegrityError
 
 
 # Namespace creation for user, todo, location and locationreminder
 user = api_rest.namespace(
     'user',
-    description="Users login and authentication for the app"
+    description="Users login and authentication for the app",
+    validate=True
     )
 todo = BE.api_rest.namespace(
     'todo',
@@ -36,23 +37,53 @@ locationReminder = BE.api_rest.namespace(
 )
 
 # Models for serialization
-user_model = BE.api_rest.model(
+# user_model = user.model(
+#     'User',
+#     {
+#         'username': fields.String(
+#             required=True,
+#             description='A chosen username to identify the user with'
+#             ),
+#         'firstname': fields.String(
+#             required=True,
+#             description='A firstname to identify the user with'
+#             ),
+#         'lastname': fields.String(
+#             required=True,
+#             description='Lastname of user'
+#             ),
+#         'email': fields.String(
+#             required=True,
+#             description='A genuine email address'
+#             ),
+#         'password': fields.String(
+#             required=True,
+#             description='A genuine email address'
+#             )
+#     }
+# )
+
+user_model = user.model(
     'User',
     {
         'username': fields.String(
-            required=True,
+            # required=True,
             description='A chosen username to identify the user with'
             ),
         'firstname': fields.String(
-            required=True,
+            # required=True,
             description='A firstname to identify the user with'
             ),
         'lastname': fields.String(
-            required=True,
+            # required=True,
             description='Lastname of user'
             ),
         'email': fields.String(
-            required=True,
+            # required=True,
+            description='A genuine email address'
+            ),
+        'password': fields.String(
+            # required=True,
             description='A genuine email address'
             )
     }
@@ -94,7 +125,7 @@ location_model = BE.api_rest.model(
             ),
         'name': fields.String(
             required=True,
-            description='A firstname to identify the user with'
+            description='The name of the location'
             ),
         'address': fields.String(
             required=True,
@@ -135,22 +166,33 @@ locationReminder_model = BE.api_rest.model(
     }
 )
 
+# input parser
+parser = reqparse.RequestParser()
+parser.add_argument('email', type=inputs.email, help='Email address')
+parser.add_argument('username', type=str, help='Username')
+parser.add_argument('firstname', type=str, help='Firstname')
+parser.add_argument('lastname', type=str, help='Lastname')
+parser.add_argument('password', type=str, help='Password')
 
 @user.route('/')
 class UserView(Resource):
     '''Basic authentication operations necessary for a user'''
     @user.doc('Admin get all users')
-    @user.marshal_with(user_model, 200)
     def get(self):
         """Returns all users in the db
         This is just for testing, removed later"""
-        users = storage.all(User)
-        print(users)
-        return users
+        all_users = storage.all(User).values()
+        list_users = [user.to_dict() for user in users]
+        
+        return {
+            'status': 200,
+            'success': True,
+            'message': 'List of all users',
+            'data': list_users
+                }
 
     @user.doc('sign up')
-    # @user.expect(user_model)
-    @user.marshal_with(user_model, code=201)
+    @user.expect(user_model, validate=True)
     def post(self):
         '''signup: creates a new user'''
         if not request.get_json():
@@ -160,17 +202,33 @@ class UserView(Resource):
         if 'password' not in request.get_json():
             abort(400, description="Missing password")
 
-        data = request.get_json()
-        user = User(**data)
-        # Work on integrity errors.
-        user.save()
-        # find a way to edit response of marshal with
-        return {
-            'status': 201,
-            'success': True,
-            'firstname': 'User registered successfully',
-            'data': user.to_dict()
-            }
+        try:
+            data = request.get_json()
+            # args = parser.parse_args()
+            username = data['username']
+            user = storage.get(User, username)
+            if user:
+                return {
+                    'status': 400,
+                    'success': False,
+                    'message': 'This username already exists'
+                }, 400
+            user = User(**data)
+            user = user.to_dict()
+            return {
+                'status': 200,
+                'success': True,
+                'message': 'User created',
+                'data': user
+                }, 200
+        except Exception as e:
+            print(f'An error was raised {e}')
+            return {
+                'status': 500,
+                'success': False,
+                'message': e
+            }, 500
+        
 
 
 @user.route('/<string:username>')
@@ -179,8 +237,21 @@ class UserActivity(Resource):
     @user.doc('Get user Profile')
     def get(self, username):
         # username = get_jwt_identity()
+        
         user = storage.get(User, username)
-        return jsonify(user.to_dict())
+        if user:
+            return {
+                'status': 200,
+                'success': True,
+                'message': f'Details of user {username}',
+                'data': user.to_dict()
+                }, 200
+        return {
+            'status': 400,
+            'success': False,
+            'message': 'No user found with that name'
+        }, 404
+        
 
     @user.doc('Delete a user account')
     def delete(self, username):
@@ -188,14 +259,19 @@ class UserActivity(Resource):
         user = storage.get(User, username)
 
         if not user:
-            abort(404)
+            return {
+            'status': 400,
+            'success': False,
+            'message': 'No user found with that name'
+        }, 404
 
         storage.delete(user)
         storage.save()
 
         return make_response(jsonify({}), 200)
 
-    @user.doc('Update a user information')
+    @user.doc('update user credentials')
+    @user.expect(user_model, validate=True)
     def put(self, username):
         '''Updates a user'''
         user = storage.get(User, username)
@@ -204,7 +280,13 @@ class UserActivity(Resource):
         if not request.get_json():
             abort(400, description="Not a JSON")
         ignore = ['username', 'created_at', 'updated_at', 'id']
+        
         data = request.get_json()
+        if username != data['username']:
+            return {
+                'message': 'invalid request'
+            }, 400
+        
         for k, v in data.items():
             if k not in ignore:
                 setattr(user, k, v)

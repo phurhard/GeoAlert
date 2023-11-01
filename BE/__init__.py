@@ -18,9 +18,7 @@ app_views = Blueprint('app_views', __name__, url_prefix='/api/')
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 api_rest = Api(app, version='1.0', title='GeoAlert',
-               description='A Location based Todo app')
+               description='A Location based Todo app',
+               contact='phurhardeen@gmail.com', endpoint='api/v1', validate=True, catch_all_404s=True)
 
-
-# CORS(app_views)
-
-# from BE.api.v1.views import (index, GeoAlert)
+# api_rest

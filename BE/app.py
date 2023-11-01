@@ -3,7 +3,7 @@
 from BE.models import storage
 from os import environ
 from flask import make_response, jsonify
-from BE import app
+from BE import api_rest, app
 from BE.api.v1.views.index import *
 from BE.api.v1.views.GeoAlert import *
 import logging
