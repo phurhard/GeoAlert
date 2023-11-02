@@ -23,6 +23,7 @@ class Todo(BaseModel, Base):
 
     user = relationship('User', backref='todos')
     # location = relationship('Location', backref='todos')
+    
     def __init__(self, *args, **kwargs):
         """initializes todo"""
         super().__init__(*args, **kwargs) 
