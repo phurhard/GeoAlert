@@ -106,10 +106,10 @@ todo_model = BE.api_rest.model(
             ),
         'due_date': fields.DateTime(
             required=True,
-            description='A genuine email address'
+            description='When the task should be due'
             ),
         'completed': fields.Boolean(
-            # check for the diff operations available to fields
+            default=False,
             required=True,
             description='Has the task been done'
             )
@@ -296,16 +296,16 @@ class UserActivity(Resource):
 class TodoView(Resource):
     '''Users tasks activities'''
     @todo.doc('Admin: get all todos')
-    @todo.marshal_with(todo_model, 200)
+    # @todo.marshal_with(todo_model, 200)
     def get(self):
         '''Get all todo in the db'''
         all_tasks = storage.all(Todo).values()
         tasks = [task.to_dict() for task in all_tasks]
-        print(tasks)
         return tasks, 200
 
     @todo.doc('Create a new todo')
     @todo.expect(todo_model, validate=True)
+    # @todo.marshal_with(todo_model)
     def post(self):
         '''Creates a new todo for a user
         username will be sent as part of payload'''
@@ -320,16 +320,9 @@ class TodoView(Resource):
                 'success': False,
                 'message': 'No user found'
             }, 404
-        if "completed" in data:
-            value = data['completed']
-            data['completed'] = bool("False") if value == "False" else bool("True")
-
-        if 'due_date' in data.keys():
-            dateStr = data['due_date']
-            data['duedate'] = datetime.fromisoformat(dateStr)
+        data['due_date'] = datetime.strptime(data['due_date'], "%Y-%m-%d %H:%M:%S")
+        
         todo = Todo(**data)
-        tasks = todo.to_dict()
-        tasks['due_date'] = tasks['due_date'].strftime('%c')
         return {
             'status': 201,
             'success': True,
@@ -345,7 +338,7 @@ class TodoTasks(Resource):
     
     @todo.doc('Get a single todo')
     def get(self, id):
-        '''Gets all todos relates to a user'''
+        '''Gets a single task'''
         # k = 1
         # Todo = {}
         # if not user:
