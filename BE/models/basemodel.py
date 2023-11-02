@@ -74,6 +74,9 @@ class BaseModel:
         if "password" in new_dict:
             new_dict["password"] = str(new_dict["password"])
             # hide the password from showing
+            
+        if "due_date" in new_dict:
+            new_dict["due_date"] = str(new_dict["due_date"])
 
         return new_dict
 
