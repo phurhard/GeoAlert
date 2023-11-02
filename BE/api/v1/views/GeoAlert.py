@@ -366,6 +366,7 @@ class TodoTasks(Resource):
         '''This method deletes a todo based on it's ID'''
         if task := storage.get(Todo, id):
             storage.delete(task)
+            storage.save()
             return {
                 'status': 204,
                 'success': True,
@@ -378,6 +379,7 @@ class TodoTasks(Resource):
         }, 404
 
     @todo.doc('Update a todo')
+    @todo.expect(todo_model, validate=True)
     def put(self, id):
         '''Updates the todo with given parameters'''
         task = storage.get(Todo, id)
