@@ -331,7 +331,7 @@ class TodoView(Resource):
         }, 201
 
 
-@todo.route('/<string:id>')
+@todo.route('/<username>/<string:id>')
 @todo.param('id', 'task id')
 class TodoTasks(Resource):
     '''Tasks'''
