@@ -45,7 +45,7 @@ class DBStorage:
             'mysql+mysqldb://admin:GeoAlertAdmin@localhost/GeoAlert'
             )
         '''
-        self.__engine = create_engine('sqlite:///:GEOALERT.db', echo=True)
+        self.__engine = create_engine('sqlite:///GEOALERT.db', echo=True)
 
     def load(self):
         """Load the db session"""

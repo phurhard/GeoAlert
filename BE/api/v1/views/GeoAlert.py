@@ -67,23 +67,23 @@ user_model = user.model(
     'User',
     {
         'username': fields.String(
-            # required=True,
+            required=True,
             description='A chosen username to identify the user with'
             ),
         'firstname': fields.String(
-            # required=True,
+            required=True,
             description='A firstname to identify the user with'
             ),
         'lastname': fields.String(
-            # required=True,
+            required=True,
             description='Lastname of user'
             ),
         'email': fields.String(
-            # required=True,
+            required=True,
             description='A genuine email address'
             ),
         'password': fields.String(
-            # required=True,
+            required=True,
             description='A genuine email address'
             )
     }
@@ -105,12 +105,13 @@ todo_model = BE.api_rest.model(
             description='Lastname of user'
             ),
         'due_date': fields.DateTime(
-            required=True,
+            required=False,
+            default=datetime.now(),
             description='When the task should be due'
             ),
         'completed': fields.Boolean(
             default=False,
-            required=True,
+            # required=True,
             description='Has the task been done'
             )
     }
@@ -174,6 +175,7 @@ parser.add_argument('firstname', type=str, help='Firstname')
 parser.add_argument('lastname', type=str, help='Lastname')
 parser.add_argument('password', type=str, help='Password')
 
+
 @user.route('/')
 class UserView(Resource):
     '''Basic authentication operations necessary for a user'''
@@ -183,7 +185,7 @@ class UserView(Resource):
         This is just for testing, removed later"""
         all_users = storage.all(User).values()
         list_users = [user.to_dict() for user in all_users]
-        
+
         return {
             'status': 200,
             'success': True,
@@ -227,7 +229,6 @@ class UserView(Resource):
                 'success': False,
                 'message': e
             }, 500
-        
 
 
 @user.route('/<string:username>')
@@ -249,7 +250,6 @@ class UserActivity(Resource):
             'success': False,
             'message': 'No user found with that name'
         }, 404
-        
 
     @user.doc('Delete a user account')
     def delete(self, username):
@@ -258,15 +258,15 @@ class UserActivity(Resource):
 
         if not user:
             return {
-            'status': 400,
-            'success': False,
-            'message': 'No user found with that name'
-        }, 404
+                'status': 400,
+                'success': False,
+                'message': 'No user found with that name'
+            }, 404
 
         storage.delete(user)
         storage.save()
 
-        return make_response(jsonify({}), 200)
+        return make_response(jsonify({}), 204)
 
     @user.doc('update user credentials')
     @user.expect(user_model, validate=True)
@@ -278,13 +278,13 @@ class UserActivity(Resource):
         if not request.get_json():
             abort(400, description="Not a JSON")
         ignore = ['username', 'created_at', 'updated_at', 'id']
-        
+
         data = request.get_json()
         if username != data['username']:
             return {
                 'message': 'invalid request'
             }, 400
-        
+
         for k, v in data.items():
             if k not in ignore:
                 setattr(user, k, v)
@@ -305,7 +305,6 @@ class TodoView(Resource):
 
     @todo.doc('Create a new todo')
     @todo.expect(todo_model, validate=True)
-    # @todo.marshal_with(todo_model)
     def post(self):
         '''Creates a new todo for a user
         username will be sent as part of payload'''
@@ -321,7 +320,7 @@ class TodoView(Resource):
                 'message': 'No user found'
             }, 404
         data['due_date'] = datetime.strptime(data['due_date'], "%Y-%m-%d %H:%M:%S")
-        
+
         todo = Todo(**data)
         return {
             'status': 201,
@@ -334,8 +333,7 @@ class TodoView(Resource):
 @todo.route('/<string:id>')
 @todo.param('id', 'task id')
 class TodoTasks(Resource):
-    '''Tasks'''
-    
+    '''Tasks functions'''
     @todo.doc('Get a single todo')
     def get(self, id):
         '''Gets a single task'''
@@ -390,7 +388,7 @@ class TodoTasks(Resource):
                 'success': False,
                 'message': 'Requested task not found'
                 }, 404
-        
+
         data = request.get_json()
         if not data:
             return {"Error": "Not a JSON"}, 400
@@ -407,51 +405,77 @@ class TodoTasks(Resource):
             }, 200
 
 
-@location.route('/location')
+@location.route('/')
 class LocationView(Resource):
     '''Location based details
     location details is sent from the client and saved on the db
     to reduce successive calls to the Google API'''
-    def get_Locations():
-        '''Gets all the location data. will edit
-        it to get only location based on a user'''
+    @location.doc(description='Gets all the locations in the database')
+    @location.response(200, 'Success')
+    def get(self):
+        '''
+        Gets all the location data'''
         data = storage.all(Location)
         dictLocation = {k: v.to_dict() for k, v in data.items()}
         return jsonify({"contents": dictLocation})
 
-    def create_L(self):
+    @location.doc(description='This creates a location instance')
+    @location.expect(location_model, validate=True)
+    @location.response(201, 'Created')
+    def post(self):
         '''Creates a location class for a user '''
         # user = storage.get(User, username)
         data = request.get_json()
-        data['user_name'] = self
+        # data['user_name'] = self
         location = Location(**data)
         location.save()
+        # print(location.to_dict())
         return jsonify(location.to_dict())
 
-    def get_L(self, locationId):
+
+@location.route('/<string:id>')
+class SingleLocationOps(Resource):
+    '''Operations to be done on a single location instance'''
+    @location.response(404, 'The requested resource not found')
+    @location.response(200, 'Success')
+    def get(self, id):
         '''Gets a location based on it id'''
-        location = storage.get(Location, locationId)
-        return jsonify(location.to_dict())
-        # return jsonify({"Error": "There is no Location data for this user"})
+        try:
+            location = storage.get(Location, id)
+            return jsonify(location.to_dict()), 200
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'status_code': 404,
+                "message": str(e)
+                }), 404
 
-    def update_L(self, locationId):
+    @location.response(404, 'The requested resource not found')
+    @location.response(200, 'The resource has been updated successfully')
+    def put(self, id):
         '''Updates location detail'''
         user = storage.get(User, self)
-        location = storage.get(Location, locationId)
-        if self == location.user_name:
+        location = storage.get(Location, id)
+        if user is None or location is None:
+            return jsonify({
+                'success': False,
+                'message': 'User or Location resource not found'
+            }), 404
+        if self.username == location.user_name:
             data = request.get_json()
             for k, v in data.items():
                 setattr(location, k, v)
         location.to_dict()['updated_at'] = datetime.utcnow()
-        user.save()
-        return jsonify(location.to_dict())
+        storage.save(location)
+        return jsonify(location.to_dict()), 200
 
-    def delete_L(self, locationId):
+    @location.response(204, 'The resource has been deleted')
+    def delete(self, id):
         '''Deletes a location resource'''
         user = storage.get(User, self)
         locations = user.locations
         for location in locations:
-            if location.to_dict()['id'] == locationId:
+            if location.to_dict()['id'] == id:
                 location.delete()
         user.save()
         return jsonify({})
