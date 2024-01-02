@@ -440,14 +440,15 @@ class SingleLocationOps(Resource):
     @location.response(200, 'Success')
     def get(self, id):
         '''Gets a location based on it id'''
-        try:
-            location = storage.get(Location, id)
-            return jsonify(location.to_dict()), 200
-        except Exception as e:
-            return jsonify({
+
+        location = storage.get(Location, id)
+        if location is not None:
+            return (location.to_dict()), 200
+        else:
+            return ({
                 'success': False,
                 'status_code': 404,
-                "message": str(e)
+                "message": "The resource is not found"
                 }), 404
 
     @location.response(404, 'The requested resource not found')
@@ -457,7 +458,7 @@ class SingleLocationOps(Resource):
         user = storage.get(User, self)
         location = storage.get(Location, id)
         if user is None or location is None:
-            return jsonify({
+            return ({
                 'success': False,
                 'message': 'User or Location resource not found'
             }), 404
@@ -467,18 +468,15 @@ class SingleLocationOps(Resource):
                 setattr(location, k, v)
         location.to_dict()['updated_at'] = datetime.utcnow()
         storage.save(location)
-        return jsonify(location.to_dict()), 200
+        return (location.to_dict()), 200
 
     @location.response(204, 'The resource has been deleted')
     def delete(self, id):
         '''Deletes a location resource'''
-        user = storage.get(User, self)
-        locations = user.locations
-        for location in locations:
-            if location.to_dict()['id'] == id:
-                location.delete()
-        user.save()
-        return jsonify({})
+        location = storage.get(Location, id)
+        location.delete()
+        location.save()
+        return ({}), 204
 
 
 @locationReminder.route('/locationreminder')
