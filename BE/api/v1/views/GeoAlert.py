@@ -452,20 +452,21 @@ class SingleLocationOps(Resource):
                 }), 404
 
     @location.response(404, 'The requested resource not found')
-    @location.response(200, 'The resource has been updated successfully')
+    @location.response(404, 'The requested resource not found')
+    @location.expect(location_model)
     def put(self, id):
         '''Updates location detail'''
-        user = storage.get(User, self)
+        # user = storage.get(User, self)
         location = storage.get(Location, id)
-        if user is None or location is None:
+        if location is None:
             return ({
                 'success': False,
-                'message': 'User or Location resource not found'
+                'message': 'Location resource not found'
             }), 404
-        if self.username == location.user_name:
-            data = request.get_json()
-            for k, v in data.items():
-                setattr(location, k, v)
+        # if self.username == location.user_name:
+        data = request.get_json()
+        for k, v in data.items():
+            setattr(location, k, v)
         location.to_dict()['updated_at'] = datetime.utcnow()
         storage.save(location)
         return (location.to_dict()), 200
@@ -479,10 +480,10 @@ class SingleLocationOps(Resource):
         return ({}), 204
 
 
-@locationReminder.route('/locationreminder')
+@locationReminder.route('/')
 class LocationReminderView(Resource):
     '''This class combines tasks with locations'''
-    def create_LR():
+    def post(self):
         '''Creates a location based task reminder '''
         data = request.get_json()
         if not data:
@@ -495,7 +496,7 @@ class LocationReminderView(Resource):
         locaRemind.save()
         return jsonify(locaRemind.to_dict())
 
-    def delete_LR(self, locationReminderId):
+    def delete(self, locationReminderId):
         '''Removes a location reminder from the storage'''
         user = storage.get(User, self)
         locoRemind = user.locationReminder
@@ -506,7 +507,7 @@ class LocationReminderView(Resource):
                 return jsonify({"Success": "Location Reminder deleted"})
         return jsonify({"Error": "Location Reminder could not be found"})
 
-    def update_LR(self, locationReminderId):
+    def put(self, locationReminderId):
         '''Updates the location reminder'''
         ignore = ['updated_at', 'created_at', 'user_name', 'id']
         user = storage.get(User, self)
